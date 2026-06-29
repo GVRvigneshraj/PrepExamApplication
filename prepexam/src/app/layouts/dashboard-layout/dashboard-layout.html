@@ -1,15 +1,86 @@
-<!-- <app-header></app-header>
+<div class="dashboard-layout" [class.sidebar-collapsed]="isSidebarCollapsed">
+  <div class="backdrop" *ngIf="isMobileMenuOpen || isProfilePanelOpen || isNotificationsPanelOpen" (click)="closeAllPanels()"></div>
 
-<div class="layout">
+  <aside class="sidebar" [class.mobile-open]="isMobileMenuOpen" [class.collapsed]="isSidebarCollapsed">
+    <app-sidebar
+      [collapsed]="isSidebarCollapsed"
+      [mobileOpen]="isMobileMenuOpen"
+      (toggleCollapse)="toggleSidebar()"
+      (closeMobileMenu)="closeAllPanels()"
+    ></app-sidebar>
+  </aside>
 
-    <app-sidebar></app-sidebar>
+  <div class="main-wrapper">
+    <header class="header">
+      <app-header
+        [isSidebarCollapsed]="isSidebarCollapsed"
+        [isProfileOpen]="isProfilePanelOpen"
+        [isNotificationsOpen]="isNotificationsPanelOpen"
+        (toggleSidebar)="toggleSidebar()"
+        (toggleNotifications)="toggleNotifications()"
+        (toggleProfile)="toggleProfile()"
+      ></app-header>
+    </header>
 
-    <main>
-
-        <router-outlet></router-outlet>
-
+    <main class="page-content">
+      <router-outlet></router-outlet>
     </main>
 
-</div>
+    <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+      <button class="mobile-nav-item active" type="button">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </button>
+      <button class="mobile-nav-item" type="button">
+        <i class="fas fa-book-open"></i>
+        <span>Exams</span>
+      </button>
+      <button class="mobile-nav-item" type="button">
+        <i class="fas fa-pen-fancy"></i>
+        <span>Practice</span>
+      </button>
+      <button class="mobile-nav-item" type="button" (click)="openMobileMenu()">
+        <i class="fas fa-bars"></i>
+        <span>Menu</span>
+      </button>
+    </nav>
+  </div>
 
-<app-mobile-menu></app-mobile-menu> -->
+  <aside class="slide-panel notifications-panel" [class.open]="isNotificationsPanelOpen">
+    <div class="panel-header">
+      <h3>Notifications</h3>
+      <button type="button" class="panel-close" (click)="closeAllPanels()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="panel-list">
+      <div class="panel-item">
+        <strong>Mock test reminder</strong>
+        <p>Your daily mock test starts in 30 mins.</p>
+      </div>
+      <div class="panel-item">
+        <strong>New lesson unlocked</strong>
+        <p>Algebra fundamentals is now available.</p>
+      </div>
+    </div>
+  </aside>
+
+  <aside class="slide-panel profile-panel" [class.open]="isProfilePanelOpen">
+    <div class="panel-header">
+      <h3>Profile</h3>
+      <button type="button" class="panel-close" (click)="closeAllPanels()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="profile-card">
+      <div class="profile-avatar">VR</div>
+      <h4>Vignesh Raj</h4>
+      <p>Student • JEE Aspirant</p>
+    </div>
+    <div class="panel-list">
+      <button class="panel-item action-item" type="button">Edit Profile</button>
+      <button class="panel-item action-item" type="button">Settings</button>
+      <button class="panel-item action-item" type="button">Sign Out</button>
+    </div>
+  </aside>
+</div>

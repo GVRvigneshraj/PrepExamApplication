@@ -1,13 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import {
   ReactiveFormsModule,
   FormBuilder,
   FormGroup,
-  Validators,
-  AbstractControl
+  Validators
 } from '@angular/forms';
 
 @Component({
@@ -16,13 +15,15 @@ import {
     ReactiveFormsModule,
     RouterModule],
   templateUrl: './login.html',
-  styleUrl: './login.scss',
+  // styleUrl: './login.scss',
+   styleUrls: ['./login.scss']
 
 })
 export class Login implements OnInit {
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   loginForm!: FormGroup;
 
@@ -32,6 +33,33 @@ export class Login implements OnInit {
   // Demo OTP
   demoOtp = '1234';
 
+  private getRedirectUrl(): string {
+    const queryParam = this.route.snapshot.queryParamMap.get('returnUrl')
+      || this.route.snapshot.queryParamMap.get('backUrl');
+
+    const navigationState = this.router.getCurrentNavigation()?.extras.state as
+      | { returnUrl?: string; backUrl?: string }
+      | undefined;
+
+    const stateParam = navigationState?.returnUrl || navigationState?.backUrl;
+    const fallbackUrl = (queryParam || stateParam || '/onboarding').trim();
+
+    if (!fallbackUrl || fallbackUrl === 'back' || fallbackUrl === 'previous') {
+      return '/onboarding';
+    }
+
+    if (fallbackUrl.startsWith('/') || fallbackUrl.startsWith('./') || fallbackUrl.startsWith('../')) {
+      return fallbackUrl;
+    }
+
+    return '/onboarding';
+  }
+
+  onSubmit(): void {
+    this.onLogin();
+  }
+
+
   ngOnInit(): void {
     this.buildForm();
 
@@ -39,15 +67,16 @@ export class Login implements OnInit {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
 
     if (isLoggedIn === 'true') {
-
       const exam = localStorage.getItem('selectedExam');
+      const redirectUrl = this.getRedirectUrl();
 
-      if (exam) {
+      if (redirectUrl && redirectUrl !== '/onboarding') {
+        this.router.navigateByUrl(redirectUrl);
+      } else if (exam) {
         this.router.navigate([`/${exam}/dashboard`]);
       } else {
         this.router.navigate(['/onboarding']);
       }
-
     }
   }
 
@@ -106,7 +135,7 @@ export class Login implements OnInit {
 
         this.isLoading = false;
 
-        this.router.navigate(['/onboarding']);
+        this.router.navigateByUrl(this.getRedirectUrl());
 
       } else {
 

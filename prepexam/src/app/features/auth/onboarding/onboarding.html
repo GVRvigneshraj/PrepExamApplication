@@ -1,1 +1,69 @@
-<p>onboarding works!</p>
+<div class="onboarding-page">
+  <!-- Skip Button -->
+  <button class="skip-btn" (click)="skip()">
+    Skip <i class="fas fa-arrow-right"></i>
+  </button>
+
+  <!-- Slides Container -->
+  <div class="slides-wrapper">
+    <!-- Slide 1 -->
+    <div class="slide slide-active">
+      <div class="slide-illustration slide-1-bg">
+        <div class="floating-shapes">
+          <div class="float-shape s1"></div>
+          <div class="float-shape s2"></div>
+          <div class="float-shape s3"></div>
+          <div class="float-shape s4"></div>
+        </div>
+        <div class="illustration-main">
+          <div class="icon-orb">
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <span class="slide-badge">Step 1</span>
+        <h2>Choose Your Exam</h2>
+        <p>Select from 200+ competitive exams including UPSC, JEE, NEET, banking, and more.</p>
+        <div class="slide-features">
+          <div class="feature">
+            <i class="fas fa-check-circle"></i>
+            <span>Government & entrance exams</span>
+          </div>
+          <div class="feature">
+            <i class="fas fa-check-circle"></i>
+            <span>State-level examinations</span>
+          </div>
+          <div class="feature">
+            <i class="fas fa-check-circle"></i>
+            <span>Certification courses</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dots Indicator -->
+  <div class="dots-indicator">
+    <div class="dot active"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="onboarding-actions">
+    <button class="btn-next" (click)="next()">
+      {{ currentSlide === 2 ? 'Get Started' : 'Next' }}
+<i class="fas fa-arrow-right"></i>
+    </button>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar">
+    <div
+  class="progress-fill"
+  [style.width.%]="((currentSlide + 1) / slides.length) * 100">
+</div>
+  </div>
+</div>

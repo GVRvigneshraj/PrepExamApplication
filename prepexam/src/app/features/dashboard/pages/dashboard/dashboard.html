@@ -1,1 +1,206 @@
-<p>dashboard works!</p>
+  <main class="page-content">
+      <!-- Welcome Banner -->
+      <div class="welcome-banner">
+        <div class="welcome-text">
+          <h1>Good Morning, John! 👋</h1>
+          <p>You have 3 pending tasks and 1 mock test scheduled today.</p>
+        </div>
+        <div class="welcome-illustration">
+          <div class="illustration-card">
+            <div class="card-stat">
+              <span class="stat-number">72%</span>
+              <span class="stat-desc">Overall Score</span>
+            </div>
+            <div class="card-progress">
+              <div class="progress-track">
+                <div class="progress-bar-fill" style="width: 72%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-icon" style="background: rgba(108, 92, 231, 0.08); color: #6C5CE7;">
+            <i class="fas fa-book-open"></i>
+          </div>
+          <div class="stat-card-info">
+            <span class="stat-card-value">12</span>
+            <span class="stat-card-label">Subjects</span>
+          </div>
+          <div class="stat-card-trend up">
+            <i class="fas fa-arrow-up"></i> 2 this week
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-icon" style="background: rgba(16, 185, 129, 0.08); color: #10B981;">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="stat-card-info">
+            <span class="stat-card-value">48</span>
+            <span class="stat-card-label">Completed</span>
+          </div>
+          <div class="stat-card-trend up">
+            <i class="fas fa-arrow-up"></i> 8 today
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-icon" style="background: rgba(245, 158, 11, 0.08); color: #F59E0B;">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-card-info">
+            <span class="stat-card-value">24h</span>
+            <span class="stat-card-label">Study Time</span>
+          </div>
+          <div class="stat-card-trend up">
+            <i class="fas fa-arrow-up"></i> 3h today
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-icon" style="background: rgba(232, 67, 147, 0.08); color: #E84393;">
+            <i class="fas fa-fire"></i>
+          </div>
+          <div class="stat-card-info">
+            <span class="stat-card-value">7</span>
+            <span class="stat-card-label">Day Streak</span>
+          </div>
+          <div class="stat-card-trend neutral">
+            <i class="fas fa-equals"></i> Keep going!
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Grid -->
+      <div class="content-grid">
+        <!-- Recent Activity -->
+        <div class="content-card activity-card">
+          <div class="card-header">
+            <h3>Recent Activity</h3>
+            <a href="#" class="view-all">View All</a>
+          </div>
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-icon completed">
+                <i class="fas fa-check"></i>
+              </div>
+              <div class="activity-info">
+                <span class="activity-title">Completed Physics - Chapter 3</span>
+                <span class="activity-time">2 hours ago</span>
+              </div>
+              <span class="activity-score">85%</span>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon in-progress">
+                <i class="fas fa-play"></i>
+              </div>
+              <div class="activity-info">
+                <span class="activity-title">Mock Test - Mathematics</span>
+                <span class="activity-time">5 hours ago</span>
+              </div>
+              <span class="activity-score pending">Pending</span>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon completed">
+                <i class="fas fa-check"></i>
+              </div>
+              <div class="activity-info">
+                <span class="activity-title">Chemistry Practice Set 12</span>
+                <span class="activity-time">Yesterday</span>
+              </div>
+              <span class="activity-score">92%</span>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon completed">
+                <i class="fas fa-check"></i>
+              </div>
+              <div class="activity-info">
+                <span class="activity-title">Video: Organic Chemistry Basics</span>
+                <span class="activity-time">Yesterday</span>
+              </div>
+              <span class="activity-score">Watched</span>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon in-progress">
+                <i class="fas fa-play"></i>
+              </div>
+              <div class="activity-info">
+                <span class="activity-title">GK Daily Quiz #45</span>
+                <span class="activity-time">2 days ago</span>
+              </div>
+              <span class="activity-score">78%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming Schedule -->
+        <div class="content-card schedule-card">
+          <div class="card-header">
+            <h3>Today's Schedule</h3>
+            <a href="#" class="view-all">Full Calendar</a>
+          </div>
+          <div class="schedule-list">
+            <div class="schedule-item">
+              <div class="schedule-time">
+                <span class="time">09:00</span>
+                <span class="period">AM</span>
+              </div>
+              <div class="schedule-divider"></div>
+              <div class="schedule-info">
+                <span class="schedule-title">Physics - Thermodynamics</span>
+                <span class="schedule-meta">
+                  <i class="fas fa-book"></i> Chapter 5 · 45 min
+                </span>
+              </div>
+              <div class="schedule-tag study">Study</div>
+            </div>
+            <div class="schedule-item">
+              <div class="schedule-time">
+                <span class="time">11:00</span>
+                <span class="period">AM</span>
+              </div>
+              <div class="schedule-divider"></div>
+              <div class="schedule-info">
+                <span class="schedule-title">Math Mock Test #8</span>
+                <span class="schedule-meta">
+                  <i class="fas fa-file-alt"></i> 50 Questions · 60 min
+                </span>
+              </div>
+              <div class="schedule-tag test">Test</div>
+            </div>
+            <div class="schedule-item">
+              <div class="schedule-time">
+                <span class="time">03:00</span>
+                <span class="period">PM</span>
+              </div>
+              <div class="schedule-divider"></div>
+              <div class="schedule-info">
+                <span class="schedule-title">Chemistry Revision</span>
+                <span class="schedule-meta">
+                  <i class="fas fa-redo"></i> Revision · 30 min
+                </span>
+              </div>
+              <div class="schedule-tag revision">Revision</div>
+            </div>
+            <div class="schedule-item">
+              <div class="schedule-time">
+                <span class="time">05:00</span>
+                <span class="period">PM</span>
+              </div>
+              <div class="schedule-divider"></div>
+              <div class="schedule-info">
+                <span class="schedule-title">GK Current Affairs</span>
+                <span class="schedule-meta">
+                  <i class="fas fa-newspaper"></i> Daily · 20 min
+                </span>
+              </div>
+              <div class="schedule-tag study">Study</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>

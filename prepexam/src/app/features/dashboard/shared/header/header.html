@@ -1,1 +1,35 @@
-<p>header works!</p>
+<header class="top-header">
+  <div class="header-left">
+    <button class="mobile-menu-btn" type="button" (click)="onToggleSidebar()" [class.active]="isSidebarCollapsed">
+      <i class="fas" [ngClass]="isSidebarCollapsed ? 'fa-times' : 'fa-bars'"></i>
+    </button>
+
+    <div class="breadcrumb">
+      <span>Dashboard</span>
+      <i class="fas fa-chevron-right"></i>
+      <span class="current">Overview</span>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <div class="header-search">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" placeholder="Search anything..." />
+      <span class="shortcut">Ctrl + K</span>
+    </div>
+
+    <button class="header-icon-btn" type="button" (click)="onToggleNotifications()" [class.active]="isNotificationsOpen">
+      <i class="fas fa-bell"></i>
+      <span class="notification-dot">3</span>
+    </button>
+
+    <button class="user-menu-trigger" type="button" (click)="onToggleProfile()" [class.active]="isProfileOpen">
+      <div class="mini-avatar">VR</div>
+      <div class="user-info">
+        <span class="name">Vignesh</span>
+        <span class="role">Student</span>
+      </div>
+      <i class="fas fa-chevron-down"></i>
+    </button>
+  </div>
+</header>
