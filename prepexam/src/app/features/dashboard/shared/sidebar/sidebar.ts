@@ -1,9 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+
+
+
+
+
 
 @Component({
   selector: 'app-sidebar',
-  imports: [CommonModule],
+  imports: [CommonModule,
+    RouterLink,
+    RouterLinkActive],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
@@ -11,14 +19,15 @@ export class Sidebar {
   @Input() collapsed = false;
   @Input() mobileOpen = false;
 
-  @Output() toggleCollapse = new EventEmitter<void>();
-  @Output() closeMobileMenu = new EventEmitter<void>();
+  constructor(private router: Router) { }
 
-  onToggleCollapse(): void {
-    this.toggleCollapse.emit();
+  onToggleCollapse() {
+    this.collapsed = !this.collapsed;
   }
 
-  onCloseMobileMenu(): void {
-    this.closeMobileMenu.emit();
+  get exam(): string {
+    return localStorage.getItem('selectedExam') || 'neet';
   }
+
+
 }

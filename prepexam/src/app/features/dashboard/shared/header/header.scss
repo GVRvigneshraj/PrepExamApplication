@@ -274,3 +274,79 @@ display:none;
 }
 
 }
+
+.desktop-only{
+    display:flex;
+}
+
+.mobile-brand{
+    display:none;
+    align-items:center;
+    gap:12px;
+}
+
+.brand-logo{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+}
+
+.brand-text{
+    display:flex;
+    flex-direction:column;
+}
+
+.brand-text h3{
+    margin:0;
+    font-size:18px;
+    font-weight:700;
+    color:#111827;
+}
+
+.brand-text span{
+    font-size:11px;
+    color:#64748B;
+}
+
+.mobile-profile{
+    display:none;
+    border:none;
+    background:none;
+    padding:0;
+    cursor:pointer;
+}
+
+@media (max-width:768px){
+
+.desktop-only{
+    display:none;
+}
+
+.mobile-brand{
+    display:flex;
+}
+
+.mobile-profile{
+    display:block;
+}
+
+.top-header{
+    height:64px;
+    padding:0 16px;
+    justify-content:space-between;
+}
+
+.header-left{
+    flex:1;
+}
+
+.header-right{
+    gap:12px;
+}
+
+.header-icon-btn{
+    width:42px;
+    height:42px;
+}
+
+}

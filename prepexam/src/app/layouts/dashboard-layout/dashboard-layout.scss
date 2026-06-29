@@ -27,7 +27,7 @@
   height: 100vh;
   background: #ffffff;
   border-right: 1px solid #e5e7eb;
-  overflow-y: auto;
+//   overflow-y: auto;
   transition: transform 0.25s ease, width 0.25s ease;
   z-index: 200;
 }
@@ -60,7 +60,7 @@
 .page-content {
   flex: 1;
   overflow-y: auto;
-  padding: 24px 24px 96px;
+//   padding: 24px 24px 96px;
   background: #f8fafc;
 }
 
@@ -239,10 +239,12 @@
   }
 
   .page-content {
-    padding: 16px 16px 96px;
+    // padding: 16px 16px 96px;
   }
 
   .mobile-bottom-nav {
     display: flex;
   }
 }
+
+

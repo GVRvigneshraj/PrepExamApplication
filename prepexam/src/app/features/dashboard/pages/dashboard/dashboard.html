@@ -1,206 +1,250 @@
-  <main class="page-content">
-      <!-- Welcome Banner -->
-      <div class="welcome-banner">
-        <div class="welcome-text">
-          <h1>Good Morning, John! 👋</h1>
-          <p>You have 3 pending tasks and 1 mock test scheduled today.</p>
-        </div>
-        <div class="welcome-illustration">
-          <div class="illustration-card">
-            <div class="card-stat">
-              <span class="stat-number">72%</span>
-              <span class="stat-desc">Overall Score</span>
-            </div>
-            <div class="card-progress">
-              <div class="progress-track">
-                <div class="progress-bar-fill" style="width: 72%"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+<!-- <div class="toast-container">
 
-      <!-- Stats Grid -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-card-icon" style="background: rgba(108, 92, 231, 0.08); color: #6C5CE7;">
-            <i class="fas fa-book-open"></i>
-          </div>
-          <div class="stat-card-info">
-            <span class="stat-card-value">12</span>
-            <span class="stat-card-label">Subjects</span>
-          </div>
-          <div class="stat-card-trend up">
-            <i class="fas fa-arrow-up"></i> 2 this week
-          </div>
-        </div>
+  <div
+    class="toast"
+    [class.hide]="toast.hiding"
+    *ngFor="let toast of toasts">
 
-        <div class="stat-card">
-          <div class="stat-card-icon" style="background: rgba(16, 185, 129, 0.08); color: #10B981;">
-            <i class="fas fa-check-circle"></i>
-          </div>
-          <div class="stat-card-info">
-            <span class="stat-card-value">48</span>
-            <span class="stat-card-label">Completed</span>
-          </div>
-          <div class="stat-card-trend up">
-            <i class="fas fa-arrow-up"></i> 8 today
-          </div>
+    <div class="toast-icon">
+
+      <i class="fas fa-bell"></i>
+
+    </div>
+
+    <span>{{ toast.message }}</span>
+
+  </div>
+
+</div> -->
+
+<main class="dashboard-main">
+
+    <!-- ========================================= -->
+    <!-- LEVEL CARD -->
+    <!-- ========================================= -->
+
+    <section class="level-card anim-fade-scale delay-1">
+
+        <div class="level-left">
+
+            <p class="small-title">Your Level</p>
+
+            <h1>Lv. {{ level }}</h1>
+
+            <p class="xp-text">
+
+                <strong>XP {{ xp }}</strong> / {{ totalXP }}
+
+            </p>
+
+            <div class="progress">
+
+                <div class="progress-fill" [style.width.%]="progress">
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="stat-card">
-          <div class="stat-card-icon" style="background: rgba(245, 158, 11, 0.08); color: #F59E0B;">
-            <i class="fas fa-clock"></i>
-          </div>
-          <div class="stat-card-info">
-            <span class="stat-card-value">24h</span>
-            <span class="stat-card-label">Study Time</span>
-          </div>
-          <div class="stat-card-trend up">
-            <i class="fas fa-arrow-up"></i> 3h today
-          </div>
+        <div class="level-right">
+
+            <div class="crown">
+
+                <i class="fas fa-crown"></i>
+
+            </div>
+
         </div>
 
-        <div class="stat-card">
-          <div class="stat-card-icon" style="background: rgba(232, 67, 147, 0.08); color: #E84393;">
-            <i class="fas fa-fire"></i>
-          </div>
-          <div class="stat-card-info">
-            <span class="stat-card-value">7</span>
-            <span class="stat-card-label">Day Streak</span>
-          </div>
-          <div class="stat-card-trend neutral">
-            <i class="fas fa-equals"></i> Keep going!
-          </div>
-        </div>
-      </div>
+    </section>
 
-      <!-- Content Grid -->
-      <div class="content-grid">
-        <!-- Recent Activity -->
-        <div class="content-card activity-card">
-          <div class="card-header">
-            <h3>Recent Activity</h3>
-            <a href="#" class="view-all">View All</a>
-          </div>
-          <div class="activity-list">
-            <div class="activity-item">
-              <div class="activity-icon completed">
-                <i class="fas fa-check"></i>
-              </div>
-              <div class="activity-info">
-                <span class="activity-title">Completed Physics - Chapter 3</span>
-                <span class="activity-time">2 hours ago</span>
-              </div>
-              <span class="activity-score">85%</span>
+    <!-- ========================================= -->
+    <!-- STATISTICS -->
+    <!-- ========================================= -->
+
+    <section class="stats-grid">
+
+        <div class="stat-card" [ngClass]="'anim-fade-up stat-delay-' + i" *ngFor="let stat of stats; let i = index">
+
+            <p class="title">{{ stat.title }}</p>
+            <div class="stats-grid-container">
+                <div class="icon" [style.background]="stat.bg">
+
+                    <i [class]="stat.icon" [style.color]="stat.color">
+                    </i>
+
+                </div>
+                <h3>{{ stat.value }}</h3>
             </div>
-            <div class="activity-item">
-              <div class="activity-icon in-progress">
-                <i class="fas fa-play"></i>
-              </div>
-              <div class="activity-info">
-                <span class="activity-title">Mock Test - Mathematics</span>
-                <span class="activity-time">5 hours ago</span>
-              </div>
-              <span class="activity-score pending">Pending</span>
-            </div>
-            <div class="activity-item">
-              <div class="activity-icon completed">
-                <i class="fas fa-check"></i>
-              </div>
-              <div class="activity-info">
-                <span class="activity-title">Chemistry Practice Set 12</span>
-                <span class="activity-time">Yesterday</span>
-              </div>
-              <span class="activity-score">92%</span>
-            </div>
-            <div class="activity-item">
-              <div class="activity-icon completed">
-                <i class="fas fa-check"></i>
-              </div>
-              <div class="activity-info">
-                <span class="activity-title">Video: Organic Chemistry Basics</span>
-                <span class="activity-time">Yesterday</span>
-              </div>
-              <span class="activity-score">Watched</span>
-            </div>
-            <div class="activity-item">
-              <div class="activity-icon in-progress">
-                <i class="fas fa-play"></i>
-              </div>
-              <div class="activity-info">
-                <span class="activity-title">GK Daily Quiz #45</span>
-                <span class="activity-time">2 days ago</span>
-              </div>
-              <span class="activity-score">78%</span>
-            </div>
-          </div>
+
+
+
+
+
+
         </div>
 
-        <!-- Upcoming Schedule -->
-        <div class="content-card schedule-card">
-          <div class="card-header">
-            <h3>Today's Schedule</h3>
-            <a href="#" class="view-all">Full Calendar</a>
+    </section>
+
+    <!-- ========================================= -->
+    <!-- AI ASSISTANT -->
+    <!-- ========================================= -->
+
+    <!-- <section class="assistant-card anim-fade-up delay-5">
+
+    <div class="section-header">
+
+      <h3>AI Study Assistant</h3>
+
+      <p>Your personal learning companion</p>
+
+    </div>
+
+    <div class="assistant-flow">
+
+      <ng-container
+        *ngFor="let item of assistant; let i = index; let last = last">
+
+        <div
+          class="step"
+          (click)="showToast(item.title + ' selected')">
+
+          <span class="step-number">{{ i + 1 }}</span>
+
+          <div
+            class="circle"
+            [style.background]="item.bg">
+
+            <i
+              [class]="item.icon"
+              [style.color]="item.color">
+            </i>
+
           </div>
-          <div class="schedule-list">
-            <div class="schedule-item">
-              <div class="schedule-time">
-                <span class="time">09:00</span>
-                <span class="period">AM</span>
-              </div>
-              <div class="schedule-divider"></div>
-              <div class="schedule-info">
-                <span class="schedule-title">Physics - Thermodynamics</span>
-                <span class="schedule-meta">
-                  <i class="fas fa-book"></i> Chapter 5 · 45 min
+
+          <div class="step-text">
+
+            <h4>{{ item.title }}</h4>
+
+            <small>{{ item.subtitle }}</small>
+
+          </div>
+
+        </div>
+
+        <div
+          class="arrow"
+          *ngIf="!last">
+
+          <i class="fas fa-arrow-right"></i>
+
+        </div>
+
+      </ng-container>
+
+    </div>
+
+  </section> -->
+
+    <!-- ========================================= -->
+    <!-- MOTIVATION -->
+    <!-- ========================================= -->
+
+    <section class="motivation-card anim-fade-up delay-6">
+
+        <div class="motivation-content">
+
+            <h3>Motivate Your Mistakes</h3>
+
+            <p>
+                Mistakes are proof that you're trying.
+                Analyze them today so you don't repeat
+                them tomorrow.
+            </p>
+
+            <span class="cta" (click)="showToast('Opening mistake analysis')">
+
+                Keep Going! 💪
+
+                <i class="fas fa-arrow-right"></i>
+
+            </span>
+
+        </div>
+
+        <div class="motivation-image">
+
+            <img src="assets/images/motivation.png" alt="Motivation">
+
+        </div>
+
+    </section>
+
+    <!-- ========================================= -->
+    <!-- TODAY'S ASSESSMENTS -->
+    <!-- ========================================= -->
+
+    <section class="assessment-card anim-fade-up delay-7">
+
+        <div class="section-title">
+
+            <h3>Today's Assessments</h3>
+
+            <a (click)="showToast('View All Assessments')">
+
+                View All
+
+                <i class="fas fa-chevron-right"></i>
+
+            </a>
+
+        </div>
+
+        <div class="assessment-item" *ngFor="let exam of assessments" (click)="showToast(exam.subject + ' selected')">
+
+            <div class="assessment-left">
+
+                <div class="assessment-icon" [style.background]="exam.bg">
+
+                    <i [class]="exam.icon" [style.color]="exam.color">
+                    </i>
+
+                </div>
+
+                <div>
+
+                    <h4>{{ exam.subject }}</h4>
+
+                    <small>{{ exam.questions }} Questions</small>
+
+                </div>
+
+            </div>
+
+            <div class="assessment-right">
+
+                <span class="score" [ngClass]="{
+            'score-high': exam.score >= 80,
+            'score-mid': exam.score >= 70 && exam.score < 80,
+            'score-low': exam.score < 70
+          }">
+
+                    {{ exam.score }}%
+
                 </span>
-              </div>
-              <div class="schedule-tag study">Study</div>
+
+                <i class="fas fa-check-circle" [ngClass]="{
+            'clr-high': exam.score >= 80,
+            'clr-mid': exam.score >= 70 && exam.score < 80,
+            'clr-low': exam.score < 70
+          }">
+
+                </i>
+
             </div>
-            <div class="schedule-item">
-              <div class="schedule-time">
-                <span class="time">11:00</span>
-                <span class="period">AM</span>
-              </div>
-              <div class="schedule-divider"></div>
-              <div class="schedule-info">
-                <span class="schedule-title">Math Mock Test #8</span>
-                <span class="schedule-meta">
-                  <i class="fas fa-file-alt"></i> 50 Questions · 60 min
-                </span>
-              </div>
-              <div class="schedule-tag test">Test</div>
-            </div>
-            <div class="schedule-item">
-              <div class="schedule-time">
-                <span class="time">03:00</span>
-                <span class="period">PM</span>
-              </div>
-              <div class="schedule-divider"></div>
-              <div class="schedule-info">
-                <span class="schedule-title">Chemistry Revision</span>
-                <span class="schedule-meta">
-                  <i class="fas fa-redo"></i> Revision · 30 min
-                </span>
-              </div>
-              <div class="schedule-tag revision">Revision</div>
-            </div>
-            <div class="schedule-item">
-              <div class="schedule-time">
-                <span class="time">05:00</span>
-                <span class="period">PM</span>
-              </div>
-              <div class="schedule-divider"></div>
-              <div class="schedule-info">
-                <span class="schedule-title">GK Current Affairs</span>
-                <span class="schedule-meta">
-                  <i class="fas fa-newspaper"></i> Daily · 20 min
-                </span>
-              </div>
-              <div class="schedule-tag study">Study</div>
-            </div>
-          </div>
+
         </div>
-      </div>
-    </main>
+
+    </section>
+
+</main>

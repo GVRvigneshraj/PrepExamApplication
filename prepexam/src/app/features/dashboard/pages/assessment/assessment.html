@@ -1,1 +1,375 @@
-<p>assessment works!</p>
+<div class="toast-container">
+
+  <div
+    class="toast"
+    [class.hide]="toast.hiding"
+    *ngFor="let toast of toasts">
+
+    <div class="toast-icon">
+
+      <i class="fas fa-bell"></i>
+
+    </div>
+
+    <span>{{ toast.message }}</span>
+
+  </div>
+
+</div>
+
+<div class="page-wrapper">
+
+  <!-- ========================================= -->
+  <!-- LIST VIEW -->
+  <!-- ========================================= -->
+
+  <div
+    class="view-list"
+    [class.view-hidden]="showDetail">
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+
+      <div class="top-bar-left">
+
+        <div class="icon-btn-ghost">
+          <i class="fas fa-arrow-left"></i>
+        </div>
+
+        <div class="page-title">Assessments</div>
+
+      </div>
+
+      <div class="icon-btn-ghost" (click)="showToast('Filter options')">
+        <i class="fas fa-sliders-h"></i>
+      </div>
+
+    </div>
+
+    <!-- Subject Chips -->
+    <div class="chips-row">
+
+      <div
+        class="chip"
+        *ngFor="let sub of subjects"
+        [class.chip-active]="selectedSubject === sub.name"
+        [style.background]="selectedSubject === sub.name ? sub.color : '#fff'"
+        [style.color]="selectedSubject === sub.name ? '#fff' : '#475569'"
+        [style.borderColor]="selectedSubject === sub.name ? sub.color : '#e2e8f0'"
+        (click)="selectSubject(sub.name)">
+
+        <i [class]="sub.icon"></i>
+
+        <span>{{ sub.name }}</span>
+
+      </div>
+
+    </div>
+
+    <!-- Chapter List Header -->
+    <div class="list-header">
+
+      <div class="list-header-title">
+
+        {{ chapters.length }} Chapters
+
+      </div>
+
+      <div
+        class="list-header-sort"
+        (click)="showToast('Sort options')">
+
+        <i class="fas fa-sort-amount-down"></i>
+
+        <span>Sort</span>
+
+      </div>
+
+    </div>
+
+    <!-- Chapter List -->
+    <div class="chapter-list">
+
+      <div
+        class="chapter-item"
+        *ngFor="let ch of chapters; let i = index"
+        (click)="openChapter(ch)">
+
+        <div class="chapter-left">
+
+          <div
+            class="chapter-num"
+            [style.background]="getProgressColor(ch.progress) + '18'"
+            [style.color]="getProgressColor(ch.progress)">
+
+            {{ i + 1 }}
+
+          </div>
+
+          <div class="chapter-info">
+
+            <div class="chapter-name">{{ ch.name }}</div>
+
+            <div class="chapter-progress-row">
+
+              <div class="chapter-bar">
+
+                <div
+                  class="chapter-bar-fill"
+                  [style.width.%]="ch.progress"
+                  [style.background]="getProgressColor(ch.progress)">
+                </div>
+
+              </div>
+
+              <div
+                class="chapter-pct"
+                [style.color]="getProgressColor(ch.progress)">
+
+                {{ ch.progress }}%
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="chapter-right">
+
+          <div
+            class="chapter-action"
+            *ngIf="ch.progress === 0"
+            (click)="openChapter(ch); $event.stopPropagation()">
+
+            Start
+
+          </div>
+
+          <div
+            class="chapter-action chapter-action-filled"
+            *ngIf="ch.progress > 0 && ch.progress < 100"
+            (click)="openChapter(ch); $event.stopPropagation()"
+
+            [style.background]="'linear-gradient(135deg, #6d4cff, #8d71ff)'">
+
+            Continue
+
+          </div>
+
+          <div
+            class="chapter-done"
+            *ngIf="ch.progress === 100">
+
+            <i class="fas fa-check-circle"></i>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ========================================= -->
+  <!-- DETAIL VIEW -->
+  <!-- ========================================= -->
+
+  <div
+    class="view-detail"
+    [class.view-hidden]="!showDetail"
+    *ngIf="selectedChapter">
+
+    <!-- Detail Top Bar -->
+    <div class="top-bar">
+
+      <div class="top-bar-left">
+
+        <div class="icon-btn-ghost" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+        </div>
+
+        <div class="page-title">{{ selectedChapter.name }}</div>
+
+      </div>
+
+      <div class="icon-btn-ghost" (click)="showToast('More options')">
+        <i class="fas fa-ellipsis-v"></i>
+      </div>
+
+    </div>
+
+    <!-- Stats Row -->
+    <div class="detail-stats">
+
+      <div class="detail-stat">
+
+        <div class="detail-stat-icon" style="background: linear-gradient(135deg, #f0ebff, #ddd4ff); color: #6d4cff;">
+          <i class="fas fa-book-open"></i>
+        </div>
+
+        <div class="detail-stat-label">Lessons</div>
+
+        <div class="detail-stat-value">{{ selectedChapter.lessons }}</div>
+
+      </div>
+
+      <div class="detail-stat-divider"></div>
+
+      <div class="detail-stat">
+
+        <div class="detail-stat-icon" style="background: linear-gradient(135deg, #e0f7fa, #b2ebf2); color: #0097a7;">
+          <i class="fas fa-question-circle"></i>
+        </div>
+
+        <div class="detail-stat-label">Questions</div>
+
+        <div class="detail-stat-value">{{ selectedChapter.questions }}</div>
+
+      </div>
+
+      <div class="detail-stat-divider"></div>
+
+      <div class="detail-stat">
+
+        <div class="detail-ring-wrap">
+
+          <svg class="detail-ring" viewBox="0 0 48 48">
+
+            <circle
+              class="ring-bg"
+              cx="24"
+              cy="24"
+              [attr.r]="ringRadius">
+
+            </circle>
+
+            <circle
+              class="ring-fill"
+              cx="24"
+              cy="24"
+              [attr.r]="ringRadius"
+              [style.strokeDasharray]="ringCircumference"
+              [style.strokeDashoffset]="getProgressOffset(selectedChapter.progress)"
+              [style.stroke]="getProgressColor(selectedChapter.progress)">
+
+            </circle>
+
+          </svg>
+
+          <div class="detail-ring-pct" [style.color]="getProgressColor(selectedChapter.progress)">
+            {{ selectedChapter.progress }}%
+          </div>
+
+        </div>
+
+        <div class="detail-stat-label">Progress</div>
+
+      </div>
+
+    </div>
+
+    <!-- Description -->
+    <div class="detail-desc">
+
+      <div class="detail-desc-title">About this Chapter</div>
+
+      <div class="detail-desc-text">
+
+        {{ getChapterDescription(selectedChapter) }}
+
+      </div>
+
+    </div>
+
+    <!-- Lessons -->
+    <div class="detail-lessons">
+
+      <div class="detail-lessons-header">
+
+        <div class="detail-lessons-title">Lessons</div>
+
+        <div class="detail-lessons-count">
+
+          {{ getChapterLessons(selectedChapter).filter(l => l.completed).length }} / {{ getChapterLessons(selectedChapter).length }} Completed
+
+        </div>
+
+      </div>
+
+      <div class="lesson-list">
+
+        <div
+          class="lesson-item"
+          *ngFor="let lesson of getChapterLessons(selectedChapter); let li = index">
+
+          <div class="lesson-left">
+
+            <div
+              class="lesson-num"
+              [class.lesson-num-done]="lesson.completed">
+
+              <i class="fas fa-check" *ngIf="lesson.completed"></i>
+
+              <span *ngIf="!lesson.completed">{{ li + 1 }}</span>
+
+            </div>
+
+            <div
+              class="lesson-name"
+              [class.lesson-name-done]="lesson.completed">
+
+              {{ lesson.name }}
+
+            </div>
+
+          </div>
+
+          <div class="lesson-right">
+
+            <div
+              class="lesson-start"
+              *ngIf="!lesson.completed"
+              (click)="startLesson(lesson.name)">
+
+              Start
+
+            </div>
+
+            <div
+              class="lesson-done-icon"
+              *ngIf="lesson.completed">
+
+              <i class="fas fa-check-circle"></i>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Bottom Button -->
+    <div class="detail-bottom">
+
+      <div
+        class="test-btn"
+        (click)="startChapterTest()">
+
+        <i class="fas fa-clipboard-check"></i>
+
+        <span>Start Chapter Test</span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

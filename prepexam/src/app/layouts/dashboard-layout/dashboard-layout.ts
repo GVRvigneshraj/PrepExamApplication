@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { Header } from '../../features/dashboard/shared/header/header';
 import { Sidebar } from '../../features/dashboard/shared/sidebar/sidebar';
+import { MobileMenu } from '../../features/dashboard/shared/mobile-menu/mobile-menu';
 
 @Component({
   selector: 'app-dashboard-layout',
-  imports: [CommonModule, RouterOutlet, Header, Sidebar],
+  imports: [CommonModule, RouterOutlet, Header, Sidebar,MobileMenu],
   templateUrl: './dashboard-layout.html',
   styleUrl: './dashboard-layout.scss',
 })
@@ -15,6 +16,9 @@ export class DashboardLayout {
   isMobileMenuOpen = false;
   isProfilePanelOpen = false;
   isNotificationsPanelOpen = false;
+
+
+  constructor(private router: Router) {}
 
   toggleSidebar(): void {
     if (typeof window !== 'undefined' && window.innerWidth <= 1024) {
@@ -52,4 +56,17 @@ export class DashboardLayout {
     this.isProfilePanelOpen = false;
     this.isNotificationsPanelOpen = false;
   }
+
+  logout(): void {
+
+  // Clear Local Storage
+  localStorage.clear();
+
+  // Clear Session Storage
+  sessionStorage.clear();
+
+  // Navigate to Login Page
+  this.router.navigate(['/login']);
+
+}
 }

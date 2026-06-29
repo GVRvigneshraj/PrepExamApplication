@@ -26,24 +26,12 @@
       <router-outlet></router-outlet>
     </main>
 
-    <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
-      <button class="mobile-nav-item active" type="button">
-        <i class="fas fa-home"></i>
-        <span>Home</span>
-      </button>
-      <button class="mobile-nav-item" type="button">
-        <i class="fas fa-book-open"></i>
-        <span>Exams</span>
-      </button>
-      <button class="mobile-nav-item" type="button">
-        <i class="fas fa-pen-fancy"></i>
-        <span>Practice</span>
-      </button>
-      <button class="mobile-nav-item" type="button" (click)="openMobileMenu()">
-        <i class="fas fa-bars"></i>
-        <span>Menu</span>
-      </button>
-    </nav>
+   <!-- Mobile Bottom Navigation -->
+<app-mobile-menu
+  *ngIf="!isProfilePanelOpen &&
+         !isNotificationsPanelOpen &&
+         !isMobileMenuOpen"
+></app-mobile-menu>
   </div>
 
   <aside class="slide-panel notifications-panel" [class.open]="isNotificationsPanelOpen">
@@ -80,7 +68,7 @@
     <div class="panel-list">
       <button class="panel-item action-item" type="button">Edit Profile</button>
       <button class="panel-item action-item" type="button">Settings</button>
-      <button class="panel-item action-item" type="button">Sign Out</button>
+      <button class="panel-item action-item" type="button"  (click)="logout()">Sign Out</button>
     </div>
   </aside>
 </div>
