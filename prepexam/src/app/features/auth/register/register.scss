@@ -1,472 +1,348 @@
-:host {
-  display: block;
+// Identical palette theme matching the design guidelines from log 1.png & log 2.png
+$surface-bg: #eff3f9;
+$dot-grid-color: #cbd5e1;
+$white-pure: #ffffff;
+$brand-accent: #3b82f6;
+$brand-hover: #2563eb;
+$slate-dark: #0f172a;
+$text-sub: #64748b;
+$border-input: #e2e8f0;
+$bg-input-fields: #f1f5f9;
+
+.onboarding-container {
+  background-color: $surface-bg;
+  background-image: radial-gradient($dot-grid-color 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
   min-height: 100vh;
-  background: #F8FAFC;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: $slate-dark;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
 }
 
-.register-page {
-  min-height: 100vh;
+.card-wrapper {
+  max-width: 540px; // Slightly wider structural budget for grid form layouts
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Header branding styling */
+.header-section {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem 1.25rem 3rem;
 }
+.text-center { text-align: center; }
 
-// ═══════════════════════════════════════
-// PROGRESS STEPS
-// ═══════════════════════════════════════
-.progress-steps {
-  display: flex;
-  align-items: center;
-  margin-bottom: 2.5rem;
-}
-
-.step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  opacity: 0.35;
-  transition: all 0.3s ease;
-
-  &.active {
-    opacity: 1;
-  }
-
-  &.completed {
-    opacity: 1;
-  }
-}
-
-.step-circle {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #E2E8F0;
-  display: flex;
+.brand-logo-container {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #94A3B8;
-  transition: all 0.3s ease;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
 
-  .active & {
-    background: #6C5CE7;
-    color: #FFFFFF;
-    box-shadow: 0 4px 14px rgba(108, 92, 231, 0.35);
+  .brand-cap-icon {
+    background-color: $brand-accent;
+    color: $white-pure;
+    padding: 0.5rem;
+    border-radius: 12px;
+    width: 24px;
+    height: 24px;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.25);
   }
 
-  .completed & {
-    background: #10B981;
-    color: #FFFFFF;
-    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
-  }
-}
-
-.step-label {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #94A3B8;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-
-  .active & {
-    color: #6C5CE7;
-  }
-
-  .completed & {
-    color: #10B981;
-  }
-}
-
-.step-line {
-  width: 80px;
-  height: 2px;
-  background: #E2E8F0;
-  margin: 0 0.5rem;
-  margin-bottom: 1.5rem;
-  border-radius: 1px;
-
-  &.filled {
-    background: #10B981;
-  }
-}
-
-// ═══════════════════════════════════════
-// CONTAINER
-// ═══════════════════════════════════════
-.register-container {
-  width: 100%;
-  max-width: 480px;
-}
-
-.step-header {
-  margin-bottom: 2rem;
-
-  h2 {
+  .brand-name-text {
     font-size: 1.75rem;
     font-weight: 800;
-    color: #0F172A;
-    margin: 0 0 0.5rem;
-    letter-spacing: -0.03em;
-  }
-
-  p {
-    font-size: 0.95rem;
-    color: #64748B;
-    margin: 0;
+    letter-spacing: -0.02em;
+    color: $slate-dark;
   }
 }
 
-// ═══════════════════════════════════════
-// FORM
-// ═══════════════════════════════════════
-.register-form {
+.sub-heading-caption {
+  color: $text-sub;
+  font-size: 0.95rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Core Form surface configuration */
+.login-surface-card {
+  background: $white-pure;
+  border-radius: 24px;
+  padding: 2.5rem 2.25rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.02), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.portal-main-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.01em;
+  color: $slate-dark;
+}
+
+.portal-sub-title {
+  font-size: 0.95rem;
+  color: $text-sub;
+  margin: 0 0 2rem;
+  font-weight: 400;
+}
+
+/* Structural Form Inputs Grid mapping */
+.details-grid-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem 1rem;
+}
+
+.form-input-group {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 0.5rem;
 }
 
-.form-group {
-  label {
-    display: block;
-    font-size: 0.84rem;
-    font-weight: 600;
-    color: #334155;
-    margin-bottom: 0.5rem;
+// Spans elements edge-to-edge when layout demands it
+@media (min-width: 481px) {
+  .details-grid-wrapper .form-input-group:nth-child(5),
+  .details-grid-wrapper .form-input-group:nth-child(6) {
+    grid-column: span 2;
   }
 }
 
-.input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-
-  input {
-    width: 100%;
-    padding: 0.85rem 1rem 0.85rem 2.9rem;
-    border-radius: 12px;
-    border: 1.5px solid #E2E8F0;
-    background: #FFFFFF;
-    font-size: 0.93rem;
-    color: #0F172A;
-    outline: none;
-    transition: all 0.2s ease;
-    font-family: inherit;
-
-    &::placeholder {
-      color: #94A3B8;
-    }
-
-    &:focus {
-      border-color: #6C5CE7;
-      box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
-    }
-
-    &:focus ~ .input-icon {
-      color: #6C5CE7;
-    }
-  }
-}
-
-.input-icon {
-  position: absolute;
-  left: 0.9rem;
-  color: #94A3B8;
-  display: flex;
-  align-items: center;
-  transition: color 0.2s;
-  pointer-events: none;
-}
-
-.input-suffix {
-  position: absolute;
-  right: 1rem;
-  display: flex;
-  align-items: center;
-}
-
-.toggle-btn {
-  position: absolute;
-  right: 0.75rem;
-  background: none;
-  border: none;
-  padding: 4px;
-  cursor: pointer;
-  color: #94A3B8;
-  font-size: 0.9rem;
-  transition: color 0.2s;
-
-  &:hover {
-    color: #64748B;
-  }
-}
-
-// ═══════════════════════════════════════
-// PHONE INPUT
-// ═══════════════════════════════════════
-.phone-input {
-  display: flex;
-  align-items: center;
-  border-radius: 12px;
-  border: 1.5px solid #E2E8F0;
-  background: #FFFFFF;
-  overflow: hidden;
-  transition: all 0.2s ease;
-
-  &:focus-within {
-    border-color: #6C5CE7;
-    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
-  }
-
-  input {
-    border: none !important;
-    box-shadow: none !important;
-    padding-left: 0.75rem !important;
-    flex: 1;
-    font-family: inherit;
-    font-size: 0.93rem;
-    color: #0F172A;
-    outline: none;
-
-    &:focus {
-      box-shadow: none !important;
-    }
-
-    &::placeholder {
-      color: #94A3B8;
-    }
-  }
-}
-
-.country-code {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.85rem 0.75rem;
-  background: #F8FAFC;
-  border-right: 1px solid #E2E8F0;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #334155;
-  white-space: nowrap;
-
-  .flag {
-    width: 22px;
-    height: 16px;
-    border-radius: 2px;
-    object-fit: cover;
-  }
-
-  i {
-    font-size: 0.6rem;
-    color: #94A3B8;
-  }
-}
-
-// ═══════════════════════════════════════
-// PASSWORD STRENGTH
-// ═══════════════════════════════════════
-.password-strength {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-top: 0.55rem;
-}
-
-.strength-bars {
-  display: flex;
-  gap: 4px;
-  flex: 1;
-
-  .bar {
-    height: 4px;
-    flex: 1;
-    border-radius: 2px;
-    background: #E2E8F0;
-    transition: all 0.3s ease;
-
-    &.weak {
-      background: #EF4444;
-    }
-
-    &.medium {
-      background: #F59E0B;
-    }
-
-    &.strong {
-      background: #10B981;
-    }
-  }
-}
-
-.strength-text {
-  font-size: 0.72rem;
-  font-weight: 600;
-  white-space: nowrap;
-  min-width: 44px;
-
-  &.weak { color: #EF4444; }
-  &.medium { color: #F59E0B; }
-  &.strong { color: #10B981; }
-}
-
-// ═══════════════════════════════════════
-// CHECKBOX
-// ═══════════════════════════════════════
-.checkbox-group {
-  margin-top: 0.15rem;
-}
-
-.custom-checkbox {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.6rem;
-  cursor: pointer;
-  position: relative;
-
-  input {
-    position: absolute;
-    opacity: 0;
-    height: 0;
-    width: 0;
-  }
-
-  .checkmark {
-    flex: 0 0 20px;
-    width: 20px;
-    height: 20px;
-    border-radius: 6px;
-    border: 1.5px solid #CBD5E1;
-    background: #FFFFFF;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1px;
-
-    &::after {
-      content: '\f00c';
-      font-family: 'Font Awesome 6 Free';
-      font-weight: 900;
-      font-size: 0.6rem;
-      color: white;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-  }
-
-  input:checked ~ .checkmark {
-    background: #6C5CE7;
-    border-color: #6C5CE7;
-    box-shadow: 0 2px 6px rgba(108, 92, 231, 0.3);
-  }
-
-  input:checked ~ .checkmark::after {
-    opacity: 1;
-  }
-}
-
-.checkbox-text {
-  font-size: 0.84rem;
-  color: #64748B;
-  line-height: 1.45;
-
-  a {
-    color: #6C5CE7;
-    text-decoration: none;
-    font-weight: 600;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
-
-// ═══════════════════════════════════════
-// SUBMIT BUTTON
-// ═══════════════════════════════════════
-.submit-btn {
-  width: 100%;
-  padding: 0.9rem 1.5rem;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(135deg, #6C5CE7 0%, #5A4BD1 100%);
-  color: #FFFFFF;
-  font-size: 1rem;
+.field-label-text {
+  font-size: 0.75rem;
   font-weight: 700;
+  color: $text-sub;
+  letter-spacing: 0.06em;
+}
+
+.standard-text-input {
+  background-color: $bg-input-fields;
+  border: 1px solid $border-input;
+  border-radius: 12px;
+  height: 52px;
+  padding: 0 1rem;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: $slate-dark;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+  width: 100%;
+
+  &::placeholder {
+    color: $text-sub;
+    opacity: 0.7;
+  }
+
+  &:focus {
+    border-color: $brand-accent;
+    background-color: $white-pure;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+  }
+}
+
+.custom-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.25rem;
+  padding-right: 2.5rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+}
+
+/* Mobile input structural row configuration */
+.mobile-input-row {
+  display: flex;
+  gap: 0.65rem;
+  width: 100%;
+}
+
+.prefix-country-box {
+  background-color: $bg-input-fields;
+  border: 1px solid $border-input;
+  border-radius: 12px;
+  width: 52px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: $text-sub;
+}
+
+.mobile-text-input {
+  @extend .standard-text-input;
+  flex: 1;
+}
+
+/* OTP Digits Sections Setup (Matches log 1.png verification card) */
+.otp-section-wrapper {
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.verification-helper-text {
+  font-size: 0.95rem;
+  color: $text-sub;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.otp-fields-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  width: 100%;
   margin-top: 0.5rem;
-  font-family: inherit;
+}
+
+.otp-digit-field {
+  width: 100%;
+  height: 56px;
+  background-color: $bg-input-fields;
+  border: 1px solid $border-input;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: $slate-dark;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+
+  &:focus {
+    border-color: $brand-accent;
+    background-color: $white-pure;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+  }
+}
+
+.demo-otp-helper {
+  font-size: 0.8rem;
+  color: $text-sub;
+  text-align: center;
+  margin: 0.65rem 0 1.25rem;
+  font-weight: 500;
+}
+
+.back-to-details-btn {
+  background: none;
+  border: none;
+  color: $brand-accent;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s ease;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(108, 92, 231, 0.35);
-  }
-
-  &:active {
-    transform: translateY(0);
+    color: $brand-hover;
+    text-decoration: underline;
   }
 }
 
-.btn-icon {
-  font-size: 0.85rem;
-  transition: transform 0.2s;
+/* Primary Action Buttons configuration mapping */
+.action-footer-wrapper {
+  margin-top: 1.75rem;
+  width: 100%;
 }
 
-.submit-btn:hover .btn-icon {
-  transform: translateX(3px);
+.btn {
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.95rem 1.75rem;
+  border-radius: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+
+  &:active { transform: scale(0.98); }
+  .btn-icon-left { margin-right: 0.5rem; }
+  &.full-width { width: 100%; }
 }
 
-// ═══════════════════════════════════════
-// FOOTER
-// ═══════════════════════════════════════
-.form-footer {
-  text-align: center;
+.btn-modern-primary {
+  @extend .btn;
+  background-color: $brand-accent;
+  color: $white-pure;
+
+  &:hover:not(:disabled) {
+    background-color: $brand-hover;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none;
+  }
+}
+
+/* Alternate Redirect links footer */
+.alternate-action-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem;
   margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #E2E8F0;
+  font-size: 0.95rem;
 
-  p {
-    font-size: 0.9rem;
-    color: #64748B;
-    margin: 0;
-  }
-
-  .login-link {
-    font-weight: 700;
-    color: #6C5CE7;
+  .alt-label { color: $text-sub; font-weight: 500; }
+  .alt-link-anchor {
+    color: $brand-accent;
     text-decoration: none;
+    font-weight: 600;
+    transition: color 0.15s ease;
 
     &:hover {
+      color: $brand-hover;
       text-decoration: underline;
     }
   }
 }
 
-// ═══════════════════════════════════════
-// RESPONSIVE
-// ═══════════════════════════════════════
-@media (max-width: 520px) {
-  .register-page {
-    padding: 1.5rem 1rem 2.5rem;
-  }
+.fade-in {
+  animation: fIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
 
-  .step-header h2 {
-    font-size: 1.4rem;
+/* Mobile responsive view scaling */
+@media (max-width: 480px) {
+  .login-surface-card {
+    padding: 2rem 1.25rem;
+    border-radius: 20px;
   }
+  .details-grid-wrapper {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .portal-main-title { font-size: 1.5rem; }
+  .standard-text-input { height: 48px; font-size: 0.95rem; }
+  .prefix-country-box { height: 48px; }
+  .otp-digit-field { height: 48px; font-size: 1.15rem; }
+}
 
-  .step-line {
-    width: 50px;
-  }
-
-  .submit-btn {
-    padding: 0.85rem 1rem;
-  }
+@keyframes fIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }

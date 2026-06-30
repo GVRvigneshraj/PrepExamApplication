@@ -1,145 +1,138 @@
-<div class="register-page">
-  <!-- Progress Steps -->
-  <div class="progress-steps">
-    <div class="step active">
-      <div class="step-circle">
-        <span>1</span>
-      </div>
-      <span class="step-label">Account</span>
-    </div>
-    <div class="step-line"></div>
-    <div class="step">
-      <div class="step-circle">
-        <span>2</span>
-      </div>
-      <span class="step-label">Profile</span>
-    </div>
-    <div class="step-line"></div>
-    <div class="step">
-      <div class="step-circle">
-        <span>3</span>
-      </div>
-      <span class="step-label">Verify</span>
-    </div>
-  </div>
+<div class="onboarding-container">
+  <div class="card-wrapper fade-in">
 
-  <div class="register-container">
-    <div class="step-header">
-      <h2>Create your account</h2>
-      <p>Start your exam preparation journey today</p>
+    <!-- BRAND HEADER BRANDING DESIGN (Matches log 1.png & log 2.png) -->
+    <div class="header-section text-center">
+      <div class="brand-logo-container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="brand-cap-icon"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+        <span class="brand-name-text">PrepExam</span>
+      </div>
+      <p class="sub-heading-caption">Your AI-powered exam preparation companion</p>
     </div>
 
-    <!-- Step 1: Account Details -->
-    <form class="register-form">
-      <!-- Full Name -->
-      <div class="form-group">
-        <label for="fullName">Full Name</label>
-        <div class="input-wrapper">
-          <span class="input-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-          </span>
-          <input type="text" id="fullName" placeholder="John Doe" />
-        </div>
-      </div>
+    <!-- MAIN REGISTRATION PORTAL BOX -->
+    <div class="login-surface-card">
+      <h1 class="portal-main-title">Create Account</h1>
+      <p class="portal-sub-title">Join us to start your smart preparation</p>
 
-      <!-- Email -->
-      <div class="form-group">
-        <label for="regEmail">Email Address</label>
-        <div class="input-wrapper">
-          <span class="input-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="4" width="20" height="16" rx="2"/>
-              <path d="M22 4L12 13 2 4"/>
-            </svg>
-          </span>
-          <input type="email" id="regEmail" placeholder="you@example.com" />
-          <span class="input-suffix success-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-          </span>
-        </div>
-      </div>
+      <form [formGroup]="registerForm" (ngSubmit)="$event.preventDefault(); handleAction()">
 
-      <!-- Phone -->
-      <div class="form-group">
-        <label for="phone">Phone Number</label>
-        <div class="phone-input">
-          <div class="country-code">
-            <img src="https://flagcdn.com/w40/in.png" alt="IN" class="flag" />
-            <span>+91</span>
-            <i class="fas fa-chevron-down"></i>
+        <!-- STAGE 1: ACCOUNT DETAILS INFORMATION COLLECTOR -->
+        <div *ngIf="!isOtpStage" class="details-grid-wrapper fade-in">
+
+          <!-- FULL NAME -->
+          <div class="form-input-group">
+            <label class="field-label-text">FULL NAME</label>
+            <input type="text" formControlName="fullName" placeholder="Enter full name" class="standard-text-input" />
           </div>
-          <input type="tel" id="phone" placeholder="9876543210" maxlength="10" />
-        </div>
-      </div>
 
-      <!-- Password -->
-      <div class="form-group">
-        <label for="regPassword">Password</label>
-        <div class="input-wrapper">
-          <span class="input-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-          </span>
-          <input type="password" id="regPassword" placeholder="Create a strong password" />
-          <button type="button" class="toggle-btn">
-            <i class="fas fa-eye"></i>
+          <!-- DATE OF BIRTH -->
+          <div class="form-input-group">
+            <label class="field-label-text">DATE OF BIRTH</label>
+            <input type="date" formControlName="dob" class="standard-text-input" />
+          </div>
+
+          <!-- EMAIL ADDRESS -->
+          <div class="form-input-group">
+            <label class="field-label-text">EMAIL ADDRESS</label>
+            <input type="email" formControlName="email" placeholder="example@domain.com" class="standard-text-input" />
+          </div>
+
+          <!-- GENDER SELECTION -->
+          <div class="form-input-group">
+            <label class="field-label-text">GENDER</label>
+            <select formControlName="gender" class="standard-text-input custom-select">
+              <option value="" disabled selected hidden>Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <!-- CITY -->
+          <div class="form-input-group">
+            <label class="field-label-text">CITY</label>
+            <input type="text" formControlName="city" placeholder="Enter your city" class="standard-text-input" />
+          </div>
+
+          <!-- MOBILE NUMBER ENTRY BLOCK -->
+          <div class="form-input-group">
+            <label class="field-label-text">MOBILE NUMBER</label>
+            <div class="mobile-input-row">
+              <div class="prefix-country-box">+91</div>
+              <input
+                type="tel"
+                formControlName="mobileNumber"
+                placeholder="10–digit number"
+                maxlength="10"
+                class="mobile-text-input"
+              />
+            </div>
+          </div>
+
+        </div>
+
+        <!-- STAGE 2: OTP VERIFICATION DIGITS BLOCKS (Triggers after clicking Continue) -->
+        <div *ngIf="isOtpStage" class="form-input-group otp-section-wrapper fade-in">
+          <p class="verification-helper-text">
+            We have sent a verification code to <strong>+91 {{ registerForm.get('mobileNumber')?.value }}</strong>
+          </p>
+
+          <label class="field-label-text text-center">ENTER OTP</label>
+          <div class="otp-fields-row">
+            <div *ngFor="let digit of otpDigits.controls; let i = index" class="otp-box-cell">
+              <input
+                [id]="'otp-' + i"
+                type="text"
+                maxlength="1"
+                [formControl]="$any(digit)"
+                (input)="onOtpInput($event, i)"
+                (keydown)="onOtpKeyDown($event, i)"
+                class="otp-digit-field"
+                autocomplete="one-time-code"
+                inputmode="numeric"
+              />
+            </div>
+          </div>
+          <p class="demo-otp-helper">Demo OTP: {{ demoOtpHint }}</p>
+
+          <div class="text-center">
+            <button type="button" class="back-to-details-btn" (click)="isOtpStage = false">
+              ← Edit details
+            </button>
+          </div>
+        </div>
+
+        <!-- CALL TO ACTIONS BUTTONS -->
+        <div class="action-footer-wrapper">
+          <button
+            type="submit"
+            class="btn btn-modern-primary full-width"
+            [disabled]="(!isOtpStage && !isDetailsFormValid()) || (isOtpStage && !registerForm.valid) || isSubmitting"
+          >
+            <!-- Stage 1 View Label (Matching layout style of log 2.png) -->
+            <ng-container *ngIf="!isOtpStage">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-icon-left"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              <span>Continue & Verify</span>
+            </ng-container>
+
+            <!-- Stage 2 View Label (Matching layout style of log 1.png) -->
+            <ng-container *ngIf="isOtpStage">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-icon-left"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+              <span>{{ isSubmitting ? 'Registering...' : 'Verify & Sign Up' }}</span>
+            </ng-container>
           </button>
         </div>
-        <!-- Password Strength -->
-        <div class="password-strength">
-          <div class="strength-bars">
-            <div class="bar medium"></div>
-            <div class="bar medium"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-          </div>
-          <span class="strength-text medium">Medium</span>
-        </div>
+
+      </form>
+
+      <!-- ALTERNATIVE ROUTE LINKS MAPS -->
+      <div class="alternate-action-footer">
+        <span class="alt-label">Already have an account?</span>
+        <a routerLink="/login" class="alt-link-anchor">Sign In</a>
       </div>
 
-      <!-- Confirm Password -->
-      <div class="form-group">
-        <label for="confirmPassword">Confirm Password</label>
-        <div class="input-wrapper">
-          <span class="input-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
-          </span>
-          <input type="password" id="confirmPassword" placeholder="Re-enter your password" />
-          <button type="button" class="toggle-btn">
-            <i class="fas fa-eye"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Terms -->
-      <div class="form-group checkbox-group">
-        <label class="custom-checkbox">
-          <input type="checkbox" />
-          <span class="checkmark"></span>
-          <span class="checkbox-text">
-            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
-          </span>
-        </label>
-      </div>
-
-      <button type="submit" class="submit-btn">
-        <span>Continue</span>
-        <i class="fas fa-arrow-right btn-icon"></i>
-      </button>
-    </form>
-
-    <!-- Login Link -->
-    <div class="form-footer">
-      <p>Already have an account? <a href="#" class="login-link">Sign In</a></p>
     </div>
+
   </div>
 </div>
