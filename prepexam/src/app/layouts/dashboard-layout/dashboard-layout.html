@@ -5,7 +5,7 @@
     <app-sidebar
       [collapsed]="isSidebarCollapsed"
       [mobileOpen]="isMobileMenuOpen"
-      (toggleCollapse)="toggleSidebar()"
+      (sidebarCollapseChange)="toggleSidebar()"
       (closeMobileMenu)="closeAllPanels()"
     ></app-sidebar>
   </aside>
@@ -26,12 +26,9 @@
       <router-outlet></router-outlet>
     </main>
 
-   <!-- Mobile Bottom Navigation -->
-<app-mobile-menu
-  *ngIf="!isProfilePanelOpen &&
-         !isNotificationsPanelOpen &&
-         !isMobileMenuOpen"
-></app-mobile-menu>
+    <app-mobile-menu
+      *ngIf="!isProfilePanelOpen && !isNotificationsPanelOpen && !isMobileMenuOpen"
+    ></app-mobile-menu>
   </div>
 
   <aside class="slide-panel notifications-panel" [class.open]="isNotificationsPanelOpen">
@@ -45,10 +42,6 @@
       <div class="panel-item">
         <strong>Mock test reminder</strong>
         <p>Your daily mock test starts in 30 mins.</p>
-      </div>
-      <div class="panel-item">
-        <strong>New lesson unlocked</strong>
-        <p>Algebra fundamentals is now available.</p>
       </div>
     </div>
   </aside>
@@ -66,9 +59,7 @@
       <p>Student • JEE Aspirant</p>
     </div>
     <div class="panel-list">
-      <button class="panel-item action-item" type="button">Edit Profile</button>
-      <button class="panel-item action-item" type="button">Settings</button>
-      <button class="panel-item action-item" type="button"  (click)="logout()">Sign Out</button>
+      <button class="panel-item action-item" type="button" (click)="logout()">Sign Out</button>
     </div>
   </aside>
 </div>

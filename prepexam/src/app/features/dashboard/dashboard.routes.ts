@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const DASHBOARD_ROUTES: Routes = [
-    
+
 
 {
   path: 'dashboard',
@@ -17,6 +17,12 @@ export const DASHBOARD_ROUTES: Routes = [
       .then(m => m.Assessment)
   },
 
+    {
+    path: 'mock',
+    loadComponent: () =>
+      import('./pages/mock/mock')
+      .then(m => m.Mock)
+  },
   {
     path: 'ai-chat',
     loadComponent: () =>

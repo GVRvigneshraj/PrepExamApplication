@@ -7,7 +7,8 @@ import { MobileMenu } from '../../features/dashboard/shared/mobile-menu/mobile-m
 
 @Component({
   selector: 'app-dashboard-layout',
-  imports: [CommonModule, RouterOutlet, Header, Sidebar,MobileMenu],
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, Header, Sidebar, MobileMenu],
   templateUrl: './dashboard-layout.html',
   styleUrl: './dashboard-layout.scss',
 })
@@ -16,7 +17,6 @@ export class DashboardLayout {
   isMobileMenuOpen = false;
   isProfilePanelOpen = false;
   isNotificationsPanelOpen = false;
-
 
   constructor(private router: Router) {}
 
@@ -29,6 +29,7 @@ export class DashboardLayout {
       return;
     }
 
+    // Flips the layout state variable, automatically updating the HTML classes
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
     this.isMobileMenuOpen = false;
   }
@@ -58,15 +59,8 @@ export class DashboardLayout {
   }
 
   logout(): void {
-
-  // Clear Local Storage
-  localStorage.clear();
-
-  // Clear Session Storage
-  sessionStorage.clear();
-
-  // Navigate to Login Page
-  this.router.navigate(['/login']);
-
-}
+    localStorage.clear();
+    sessionStorage.clear();
+    this.router.navigate(['/login']);
+  }
 }

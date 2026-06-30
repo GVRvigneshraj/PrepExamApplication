@@ -1,0 +1,106 @@
+<div class="mock-dashboard-container">
+  <header class="mock-clean-header">
+    <div class="header-titles">
+      <h1>Practice Mock Tests</h1>
+      <p>Evaluate your performance metrics with realistic timed exam simulations.</p>
+    </div>
+    <div class="exam-pill-badge">
+      <i class="fas fa-graduation-cap"></i>
+      <span>{{ exam.toUpperCase() }} Target</span>
+    </div>
+  </header>
+
+  <nav class="test-filter-tabs">
+    <button
+      type="button"
+      [class.active]="activeTab() === 'mini'"
+      (click)="activeTab.set('mini')">
+      <i class="fas fa-bolt"></i> <span>Mini Mocks</span>
+    </button>
+    <button
+      type="button"
+      [class.active]="activeTab() === 'full'"
+      (click)="activeTab.set('full')">
+      <i class="fas fa-award"></i> <span>Full Length</span>
+    </button>
+  </nav>
+
+  <div class="mock-cards-grid">
+    @for (test of getFilterededTests(); track test.id) {
+      <div class="mock-exam-card" [class.completed]="test.status === 'completed'">
+
+        <div class="card-status-indicator">
+          <span class="test-category" [class.full-type]="test.type === 'full'">
+            {{ test.type === 'mini' ? 'Mini Test' : 'Full Length' }}
+          </span>
+          <span class="status-pill" [ngClass]="test.status">
+            {{ test.status === 'completed' ? 'Completed' : test.status === 'ongoing' ? 'In Progress' : 'Available' }}
+          </span>
+        </div>
+
+        <div class="card-main-meta">
+          <h3>{{ test.title }}</h3>
+          <div class="subject-tags-row">
+            @for (subject of test.subjects; track subject) {
+              <span class="subject-tag">{{ subject }}</span>
+            }
+          </div>
+        </div>
+
+        <div class="card-metrics-row">
+          <div class="metric-item">
+            <i class="far fa-question-circle"></i>
+            <div class="metric-text-stack">
+              <span class="value">{{ test.totalQuestions }}</span>
+              <span class="label">Qns</span>
+            </div>
+          </div>
+          <div class="metric-item">
+            <i class="far fa-clock"></i>
+            <div class="metric-text-stack">
+              <span class="value">{{ test.durationMinutes }}m</span>
+              <span class="label">Mins</span>
+            </div>
+          </div>
+          <div class="metric-item">
+            <i class="fas fa-star"></i>
+            <div class="metric-text-stack">
+              <span class="value">{{ test.totalMarks }}</span>
+              <span class="label">Marks</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-action-footer">
+          @if (test.status === 'completed') {
+            <div class="score-summary-bar">
+              <span class="score-text">Score: <strong>{{ test.obtainedScore }}</strong>/{{ test.totalMarks }}</span>
+              <button type="button" class="action-btn review-btn" (click)="reviewResults(test.id)">
+                Analysis
+              </button>
+            </div>
+          } @else if (test.status === 'ongoing') {
+            <div class="progress-resume-container">
+              <div class="progress-track-wrapper">
+                <div class="progress-fill" [style.width.%]="test.progressPercent"></div>
+              </div>
+              <button type="button" class="action-btn resume-btn" (click)="startMockTest(test)">
+                Resume
+              </button>
+            </div>
+          } @else {
+            <button type="button" class="action-btn start-btn" (click)="startMockTest(test)">
+              Begin Test <i class="fas fa-arrow-right"></i>
+            </button>
+          }
+        </div>
+
+      </div>
+    } @empty {
+      <div class="empty-state-card">
+        <i class="fas fa-clipboard-list"></i>
+        <p>No tests available under this category currently.</p>
+      </div>
+    }
+  </div>
+</div>

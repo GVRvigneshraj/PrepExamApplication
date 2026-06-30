@@ -1,0 +1,176 @@
+:host {
+  --wa-bg-color: #efeae2;
+  --wa-bubble-user: #d9fdd3;
+  --wa-bubble-ai: #ffffff;
+  --wa-text-main: #111b21;
+  --wa-text-muted: #667781;
+  --font-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  
+  // ADJUST THIS: Set this to match the exact height of your app's existing mobile bottom menu bar
+  --mobile-menu-height: 60px; 
+}
+
+.whatsapp-chat-frame {
+  font-family: var(--font-system);
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  
+  // Desktop Setup
+  height: 94vh; 
+  background-color: var(--wa-bg-color);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+// ==========================================
+// SCROLLABLE TIMELINE
+// ==========================================
+.message-stream-body {
+  flex-grow: 1;
+  overflow-y: auto; 
+  min-height: 0;    
+  padding: 1.5rem 2rem;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  
+  &::-webkit-scrollbar { width: 5px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 4px; }
+}
+
+.stream-inner-constraint {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+// ==========================================
+// CHAT BUBBLES
+// ==========================================
+.msg-row {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  animation: popIn 0.2s cubic-bezier(0.1, 0.8, 0.3, 1);
+
+  .chat-bubble {
+    max-width: 70%;
+    padding: 0.5rem 0.75rem 0.35rem 0.75rem;
+    position: relative;
+    box-shadow: 0 1px 0.5px rgba(17,27,33,0.1);
+    box-sizing: border-box;
+  }
+
+  .msg-text-content {
+    font-size: 0.95rem;
+    line-height: 1.45;
+    margin: 0;
+    color: var(--wa-text-main);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .bubble-timestamp {
+    font-size: 0.65rem;
+    color: var(--wa-text-muted);
+    float: right;
+    margin: 0.35rem 0 0 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    .read-ticks { color: #53bdeb; font-weight: bold; }
+  }
+
+  &.user {
+    justify-content: flex-end;
+    .chat-bubble { background-color: var(--wa-bubble-user); border-radius: 8px 0px 8px 8px; }
+  }
+
+  &.ai {
+    justify-content: flex-start;
+    .chat-bubble { background-color: var(--wa-bubble-ai); border-radius: 0px 8px 8px 8px; }
+  }
+}
+
+// ChatGPT Loading Indicator
+.skeleton-wave-dots {
+  display: flex; align-items: center; gap: 0.25rem; padding: 0.3rem 0.5rem;
+  .pulse-dot {
+    width: 6px; height: 6px; background-color: var(--wa-text-muted); border-radius: 50%;
+    animation: cycleWave 1.3s infinite ease-in-out both;
+    &:nth-child(1) { animation-delay: -0.32s; }
+    &:nth-child(2) { animation-delay: -0.16s; }
+  }
+}
+
+// ==========================================
+// RIGID FOOTER: SAFE ZONE INTEGRATION
+// ==========================================
+.chat-action-footer-dock {
+  background-color: #f0f2f5;
+  padding: 0.6rem 1rem;
+  flex-shrink: 0; 
+  border-top: 1px solid #e3e6eb;
+  box-sizing: border-box;
+}
+
+.footer-input-row-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+
+  textarea {
+    flex-grow: 1;
+    background-color: #ffffff;
+    border: none;
+    outline: none;
+    border-radius: 8px;
+    padding: 0.55rem 0.75rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: none;
+    max-height: 90px;
+    box-sizing: border-box;
+    color: var(--wa-text-main);
+  }
+
+  .send-submit-action-btn {
+    background: transparent; border: none; color: var(--wa-text-muted); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; padding: 0.4rem; flex-shrink: 0;
+    &:hover:not(:disabled) { color: #008069; }
+    &:disabled { opacity: 0.3; cursor: not-allowed; }
+  }
+}
+
+@keyframes popIn { from { transform: scale(0.97); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes cycleWave { 0%, 80%, 100% { transform: scale(0.4); opacity: 0.3; } 40% { transform: scale(1); opacity: 1; } }
+
+// ==========================================
+// BOTTOM NAVIGATION SHIFT FIX FOR MOBILE
+// ==========================================
+@media (max-width: 768px) {
+  .whatsapp-chat-frame {
+    // Locks total view down precisely above your menu bar boundary layout
+    height: calc(100vh - var(--mobile-menu-height)); 
+    border-radius: 0;
+    border: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+  
+  .message-stream-body {
+    padding: 1rem 0.75rem; 
+  }
+
+  .msg-row .chat-bubble {
+    max-width: 85%;   
+  }
+}

@@ -1,10 +1,17 @@
 :host {
   display: block;
   height: 100%;
+  // Centralized dimension anchors
+  --sidebar-expanded: 260px;
+  --sidebar-collapsed: 70px;
 }
 
 .sidebar-shell {
-  width: 100%;
+  // Hard-lock the expanded dimensions to protect layout structure
+  width: var(--sidebar-expanded);
+  min-width: var(--sidebar-expanded);
+  max-width: var(--sidebar-expanded);
+  
   height: 100%;
   background: #ffffff;
   border-right: 1px solid #e2e8f0;
@@ -12,11 +19,38 @@
   flex-direction: column;
   flex-shrink: 0;
   overflow: hidden;
-  transition: width 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
 }
 
+// Strict Collapsed Rule Layer
 .sidebar-shell.collapsed {
-  width: 100%;
+  // Instantly force all structural width dimensions down to a clean, small bar footprint
+  width: var(--sidebar-collapsed) !important;
+  min-width: var(--sidebar-collapsed) !important;
+  max-width: var(--sidebar-collapsed) !important;
+
+  .logo {
+    justify-content: center;
+    width: 100%;
+    margin: 0;
+  }
+
+  .logo-text, .nav-label, .nav-section-title {
+    display: none !important; /* Prevents text overflow rendering artifacts completely */
+    opacity: 0;
+  }
+
+  .sidebar-header {
+    padding: 1.25rem 0;
+    flex-direction: column;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+
+  .collapse-btn {
+    margin: 0 auto;
+  }
 }
 
 .sidebar-header {
@@ -25,6 +59,7 @@
   justify-content: space-between;
   padding: 1.25rem 1rem;
   border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
 }
 
 .logo {
@@ -59,61 +94,12 @@
   color: #94a3b8;
   font-size: 0.7rem;
   transition: all 0.2s;
-}
-
-.collapse-btn:hover {
-  color: #64748b;
-  background: #f1f5f9;
-}
-
-.user-card {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1.25rem 1rem;
-  margin: 0.75rem;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-  border: 1px solid #e2e8f0;
-}
-
-.user-card.compact {
-  justify-content: center;
-  padding: 1rem 0.5rem;
-}
-
-.user-avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: #ffffff;
   flex-shrink: 0;
-}
 
-.user-info {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.user-name {
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: #0f172a;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.user-plan {
-  font-size: 0.75rem;
-  color: #94a3b8;
-  font-weight: 500;
+  &:hover {
+    color: #64748b;
+    background: #f1f5f9;
+  }
 }
 
 .sidebar-nav {
@@ -152,30 +138,34 @@
   transition: all 0.15s ease;
   margin-bottom: 2px;
   position: relative;
-}
+  box-sizing: border-box;
 
-.nav-item.compact {
-  justify-content: center;
-  padding: 0.7rem 0.35rem;
-}
+  &.compact {
+    justify-content: center;
+    padding: 0.7rem 0;
+    
+    .nav-icon {
+      margin: 0;
+    }
+  }
 
-.nav-item:hover {
-  background: #f8fafc;
-  color: #334155;
-}
+  &:hover {
+    background: #f8fafc;
+    color: #334155;
+  }
 
-.nav-item.active {
-  background: rgba(108, 92, 231, 0.08);
-  color: #6c5ce7;
-  font-weight: 600;
-}
-
-.nav-item.active .nav-icon {
-  color: #6c5ce7;
+  &.active {
+    background: rgba(108, 92, 231, 0.08);
+    color: #6c5ce7;
+    font-weight: 600;
+    
+    .nav-icon {
+      color: #6c5ce7;
+    }
+  }
 }
 
 .nav-icon {
-  position: relative;
   width: 20px;
   display: flex;
   align-items: center;
@@ -183,34 +173,13 @@
   font-size: 1rem;
   color: #94a3b8;
   transition: color 0.15s;
-}
-
-.nav-badge {
-  position: absolute;
-  top: -5px;
-  right: -10px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  border-radius: 50px;
-  background: #ef4444;
-  color: #ffffff;
-  font-size: 0.58rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.nav-label {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  flex-shrink: 0; // Fixes icon crushing issues when layout shifts
 }
 
 .sidebar-footer {
   padding: 0.75rem;
   border-top: 1px solid #f1f5f9;
+  flex-shrink: 0;
 }
 
 .upgrade-card {
@@ -218,11 +187,16 @@
   border-radius: 14px;
   background: linear-gradient(135deg, #fffbeb, #fef3c7);
   border: 1px solid #fde68a;
-}
+  box-sizing: border-box;
 
-.upgrade-card.compact {
-  padding: 0.8rem 0.45rem;
-  text-align: center;
+  &.compact {
+    padding: 0.6rem 0.25rem;
+    text-align: center;
+
+    .upgrade-icon {
+      margin: 0 auto;
+    }
+  }
 }
 
 .upgrade-icon {
@@ -236,10 +210,7 @@
   color: #ffffff;
   font-size: 0.9rem;
   margin-bottom: 0.75rem;
-}
-
-.upgrade-card.compact .upgrade-icon {
-  margin: 0 auto 0.45rem;
+  flex-shrink: 0;
 }
 
 .upgrade-text h4 {
@@ -268,17 +239,3 @@
   transition: all 0.2s;
   font-family: inherit;
 }
-
-.upgrade-btn:hover {
-  background: #d97706;
-}
-
-@media (max-width: 1024px) {
-  .sidebar-shell {
-    width: 280px;
-    min-width: 280px;
-    max-width: 280px;
-  }
-}
-
-

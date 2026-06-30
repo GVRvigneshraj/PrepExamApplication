@@ -1,6 +1,10 @@
 :host {
   display: block;
   height: 100vh;
+
+  // Set matching global tracking variables
+  --sidebar-expanded-width: 260px;
+  --sidebar-collapsed-width: 70px;
 }
 
 .dashboard-layout {
@@ -20,30 +24,36 @@
   z-index: 150;
 }
 
+// Outer Sidebar Wrapper Panel Boundaries
 .sidebar {
-  width: 280px;
-  min-width: 280px;
-  max-width: 280px;
+  width: var(--sidebar-expanded-width);
+  min-width: var(--sidebar-expanded-width);
+  max-width: var(--sidebar-expanded-width);
   height: 100vh;
   background: #ffffff;
   border-right: 1px solid #e5e7eb;
-//   overflow-y: auto;
-  transition: transform 0.25s ease, width 0.25s ease;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              width 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              min-width 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              max-width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 200;
 }
 
+// Triggers sizing calculation changes during minimized state
 .sidebar.collapsed {
-  width: 92px;
-  min-width: 92px;
-  max-width: 92px;
+  width: var(--sidebar-collapsed-width);
+  min-width: var(--sidebar-collapsed-width);
+  max-width: var(--sidebar-collapsed-width);
 }
 
+// MAIN LAYOUT SECTION (Header + Content Area)
 .main-wrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  min-width: 0; // Essential rule allowing flexbox layout columns to scale down and expand smoothly
 }
 
 .header {
@@ -55,55 +65,19 @@
   align-items: center;
   padding: 0 24px;
   z-index: 100;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .page-content {
   flex: 1;
   overflow-y: auto;
-//   padding: 24px 24px 96px;
   background: #f8fafc;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.mobile-bottom-nav {
-  display: none;
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 220;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(14px);
-  border-top: 1px solid #e2e8f0;
-  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-  gap: 8px;
-}
-
-.mobile-nav-item {
-  flex: 1;
-  border: none;
-  background: transparent;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  color: #64748b;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 8px 6px;
-  border-radius: 12px;
-  cursor: pointer;
-}
-
-.mobile-nav-item i {
-  font-size: 1rem;
-}
-
-.mobile-nav-item.active {
-  color: #6c5ce7;
-  background: rgba(108, 92, 231, 0.1);
-}
-
+// Slide Out Panels Style Block
 .slide-panel {
   position: fixed;
   top: 0;
@@ -208,6 +182,7 @@
   color: #64748b;
 }
 
+// RESPONSIVE MATRIX
 @media (max-width: 1024px) {
   .sidebar {
     position: fixed;
@@ -222,9 +197,9 @@
   }
 
   .sidebar.collapsed {
-    width: 280px;
-    min-width: 280px;
-    max-width: 280px;
+    width: var(--sidebar-expanded-width);
+    min-width: var(--sidebar-expanded-width);
+    max-width: var(--sidebar-expanded-width);
     transform: translateX(-100%);
   }
 
@@ -237,14 +212,8 @@
   .header {
     padding: 0 16px;
   }
-
-  .page-content {
-    // padding: 16px 16px 96px;
+    .page-content {
+    padding: 16px 16px 96px;
   }
 
-  .mobile-bottom-nav {
-    display: flex;
-  }
 }
-
-
