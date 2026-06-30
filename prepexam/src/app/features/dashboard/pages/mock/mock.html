@@ -1,106 +1,128 @@
-<div class="mock-dashboard-container">
-  <header class="mock-clean-header">
-    <div class="header-titles">
-      <h1>Practice Mock Tests</h1>
-      <p>Evaluate your performance metrics with realistic timed exam simulations.</p>
-    </div>
-    <div class="exam-pill-badge">
-      <i class="fas fa-graduation-cap"></i>
-      <span>{{ exam.toUpperCase() }} Target</span>
-    </div>
-  </header>
+<div class="workspace-wrapper">
 
-  <nav class="test-filter-tabs">
-    <button
-      type="button"
-      [class.active]="activeTab() === 'mini'"
-      (click)="activeTab.set('mini')">
-      <i class="fas fa-bolt"></i> <span>Mini Mocks</span>
+  <nav class="master-navigation-tabs">
+    <button type="button" [class.active]="activeTrack() === 'mock'" (click)="activeTrack.set('mock')">
+      <i class="fas fa-laptop-code"></i>
+      <div class="tab-label-group">
+        <span class="title">Mock Testing Portal</span>
+        <span class="subtitle">Timed Adaptive Practice Sims</span>
+      </div>
     </button>
-    <button
-      type="button"
-      [class.active]="activeTab() === 'full'"
-      (click)="activeTab.set('full')">
-      <i class="fas fa-award"></i> <span>Full Length</span>
+
+    <button type="button" [class.active]="activeTrack() === 'pyq'" (click)="activeTrack.set('pyq')">
+      <i class="fas fa-history"></i>
+      <div class="tab-label-group">
+        <span class="title">PYQ Paper Archive</span>
+        <span class="subtitle">5 Years Historical Exams</span>
+      </div>
     </button>
   </nav>
 
-  <div class="mock-cards-grid">
-    @for (test of getFilterededTests(); track test.id) {
-      <div class="mock-exam-card" [class.completed]="test.status === 'completed'">
+  <div class="content-view-segment" *ngIf="activeTrack() === 'mock'">
 
-        <div class="card-status-indicator">
-          <span class="test-category" [class.full-type]="test.type === 'full'">
-            {{ test.type === 'mini' ? 'Mini Test' : 'Full Length' }}
-          </span>
-          <span class="status-pill" [ngClass]="test.status">
-            {{ test.status === 'completed' ? 'Completed' : test.status === 'ongoing' ? 'In Progress' : 'Available' }}
-          </span>
-        </div>
+    <nav class="test-filter-tabs">
+      <button type="button" [class.active]="activeTab() === 'mini'" (click)="activeTab.set('mini')">
+        <i class="fas fa-bolt"></i> <span>Mini Mocks</span>
+      </button>
+      <button type="button" [class.active]="activeTab() === 'full'" (click)="activeTab.set('full')">
+        <i class="fas fa-award"></i> <span>Full Length</span>
+      </button>
+    </nav>
 
-        <div class="card-main-meta">
-          <h3>{{ test.title }}</h3>
-          <div class="subject-tags-row">
-            @for (subject of test.subjects; track subject) {
-              <span class="subject-tag">{{ subject }}</span>
-            }
+    <div class="cards-vertical-stack">
+      <div class="premium-mock-card" *ngFor="let test of getFilterededTests()">
+
+        <div class="card-upper-meta">
+          <div class="meta-left">
+            <span class="pill-category">Practice Assessment</span>
+            <h3>{{ test.title }}</h3>
+            <div class="subjects-row">
+              <span class="sub-badge" *ngFor="let s of test.subjects">{{ s }}</span>
+            </div>
+          </div>
+
+          <div class="metrics-pill-box">
+            <div class="metric"><i class="far fa-question-circle"></i> {{ test.totalQuestions }} Qs</div>
+            <div class="metric"><i class="far fa-clock"></i> {{ test.durationMinutes }} mins</div>
+            <div class="metric"><i class="fas fa-award"></i> {{ test.totalMarks }} Marks</div>
           </div>
         </div>
 
-        <div class="card-metrics-row">
-          <div class="metric-item">
-            <i class="far fa-question-circle"></i>
-            <div class="metric-text-stack">
-              <span class="value">{{ test.totalQuestions }}</span>
-              <span class="label">Qns</span>
-            </div>
-          </div>
-          <div class="metric-item">
-            <i class="far fa-clock"></i>
-            <div class="metric-text-stack">
-              <span class="value">{{ test.durationMinutes }}m</span>
-              <span class="label">Mins</span>
-            </div>
-          </div>
-          <div class="metric-item">
-            <i class="fas fa-star"></i>
-            <div class="metric-text-stack">
-              <span class="value">{{ test.totalMarks }}</span>
-              <span class="label">Marks</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="card-action-footer">
-          @if (test.status === 'completed') {
-            <div class="score-summary-bar">
-              <span class="score-text">Score: <strong>{{ test.obtainedScore }}</strong>/{{ test.totalMarks }}</span>
-              <button type="button" class="action-btn review-btn" (click)="reviewResults(test.id)">
-                Analysis
-              </button>
-            </div>
-          } @else if (test.status === 'ongoing') {
-            <div class="progress-resume-container">
-              <div class="progress-track-wrapper">
-                <div class="progress-fill" [style.width.%]="test.progressPercent"></div>
+        <div class="historical-attempts-section" *ngIf="test.attempts.length > 0">
+          <h4 class="section-sub-label"><i class="fas fa-chart-line"></i> Historical Score Cards Tracking</h4>
+          <div class="attempts-horizontal-scroll">
+            <div class="attempt-log-card" *ngFor="let att of test.attempts">
+              <div class="attempt-header">
+                <span class="date">{{ att.attemptDate }}</span>
+                <span class="score-badge">{{ att.score }}/{{ att.totalMarks }}</span>
               </div>
-              <button type="button" class="action-btn resume-btn" (click)="startMockTest(test)">
-                Resume
+              <div class="weakness-tags">
+                <span class="weak-tag" *ngFor="let w of att.weaknesses">⚠️ Weakness: {{ w }}</span>
+              </div>
+              <button type="button" class="inline-review-btn" (click)="runPastReviewPreview(att.id)">
+                Preview Performance
               </button>
             </div>
-          } @else {
-            <button type="button" class="action-btn start-btn" (click)="startMockTest(test)">
-              Begin Test <i class="fas fa-arrow-right"></i>
-            </button>
-          }
+          </div>
+        </div>
+
+        <div class="card-actions-strip">
+          <button type="button" class="action-trigger-btn" (click)="launchDynamicTestInstance('mock', test)">
+            Start Mock Exam Simulation <i class="fas fa-chevron-right"></i>
+          </button>
         </div>
 
       </div>
-    } @empty {
-      <div class="empty-state-card">
-        <i class="fas fa-clipboard-list"></i>
-        <p>No tests available under this category currently.</p>
+    </div>
+
+    <div class="subject-strength-dashboard-pod">
+      <div class="pod-header">
+        <h4>Subject Performance Matrix Metrics</h4>
+        <p>Aggregated analysis report processed dynamically from all complete mock test tracks.</p>
       </div>
-    }
+      <div class="pod-grid">
+        <div class="subject-metric-tile" *ngFor="let item of subjectWiseStrengthsReport()">
+          <div class="tile-meta">
+            <span class="name">{{ item.subject }}</span>
+            <span class="status-indicator-badge" [style.background]="item.color + '15'" [style.color]="item.color">
+              {{ item.status }}
+            </span>
+          </div>
+          <div class="linear-progress-wrapper">
+            <div class="bar-fill" [style.width.%]="item.percentage" [style.background]="item.color"></div>
+          </div>
+          <div class="percentage-value">{{ item.percentage }}% Efficiency Rate</div>
+        </div>
+      </div>
+    </div>
+
   </div>
+
+  <div class="content-view-segment" *ngIf="activeTrack() === 'pyq'">
+    <div class="pyq-papers-grid">
+      <div class="pyq-paper-card" *ngFor="let paper of pyqPapers()">
+        <div class="paper-year-badge">{{ paper.year }}</div>
+        <div class="paper-details">
+          <h4>{{ paper.title }}</h4>
+          <div class="paper-sub-metrics">
+            <span><i class="far fa-file-alt"></i> {{ paper.totalQuestions }} Items</span>
+            <span><i class="far fa-clock"></i> {{ paper.durationMinutes }} mins</span>
+          </div>
+          <div class="best-score-marker" *ngIf="paper.bestScore">
+            Highest Score Reached: <strong>{{ paper.bestScore }} pts</strong>
+          </div>
+        </div>
+        <button type="button" class="pyq-start-action-btn" (click)="launchDynamicTestInstance('pyq', paper)">
+          Evaluate Paper <i class="fas fa-play"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>
+
+<app-test-page
+  *ngIf="isTestingModeActive && activeTestingPayload"
+  [testPayload]="activeTestingPayload"
+  (onComplete)="handleDynamicTestResolution($event)">
+</app-test-page>

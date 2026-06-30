@@ -10,7 +10,7 @@ import { AiChat } from '../../features/dashboard/pages/ai-chat/ai-chat';
 @Component({
   selector: 'app-dashboard-layout',
   standalone: true,
-  imports: [CommonModule, FormsModule,RouterOutlet, Header, Sidebar, MobileMenu,AiChat],
+  imports: [CommonModule, FormsModule, RouterOutlet, Header, Sidebar, MobileMenu, AiChat],
   templateUrl: './dashboard-layout.html',
   styleUrl: './dashboard-layout.scss',
 })
@@ -20,13 +20,31 @@ export class DashboardLayout implements OnInit, OnDestroy {
   isProfilePanelOpen = false;
   isNotificationsPanelOpen = false;
 
+  // Feature Settings Toggles
+  isAiBotEnabled = true;       
+  isNotificationAlerts = true;  
+
+  // Enhanced Personal Info State Object
+  userProfile = {
+    fullName: 'Alex Morgan',
+    email: 'alex.morgan@domain.com',
+    phone: '+1 (555) 019-2834',
+    city: 'New York'
+  };
+
+  // Mock Notification Feed Stack
+  notificationsFeed = [
+    { id: 1, type: 'assignment', icon: 'fas fa-tasks', bg: 'blue', title: 'New Mock Test Available', text: 'Your Comprehensive Mathematics Practice Exam III is now open.', time: '10 mins ago' },
+    { id: 2, type: 'achievement', icon: 'fas fa-trophy', bg: 'gold', title: 'Weekly Goal Achieved!', text: 'Fantastic work! You completed your streak assignment goal 2 days early.', time: '2 hours ago' },
+    { id: 3, type: 'system', icon: 'fas fa-sparkles', bg: 'purple', title: 'AI Recommendation Ready', text: 'Based on your recent progress, your virtual guide suggests revising physics notes.', time: 'Yesterday' }
+  ];
+
   // Widget Controls
   isBubbleOpen = false;
   copilotMode: 'motivate' | 'doubt' = 'motivate';
   displayedMessage = '';
   isTyping = false;
   private typingTimer: any;
-
   private motivationQuotes = [
     "Consistency turns average efforts into spectacular achievements. Keep pushing!",
     "Every mistake made during your mock practice is just a lesson learned before the real exam day.",
@@ -39,7 +57,9 @@ export class DashboardLayout implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     setTimeout(() => {
-      if (!this.isBubbleOpen) this.openBotWithNewQuote();
+      if (!this.isBubbleOpen && this.isAiBotEnabled) {
+        this.openBotWithNewQuote();
+      }
     }, 2500);
   }
 
@@ -64,6 +84,22 @@ export class DashboardLayout implements OnInit, OnDestroy {
   closeBubble(event?: Event): void {
     if (event) event.stopPropagation();
     this.isBubbleOpen = false;
+  }
+
+  // Closes the widget bubble AND auto-disables the settings panel switch toggle
+  dismissBotTrigger(event: Event): void {
+    event.stopPropagation();
+    this.isAiBotEnabled = false; 
+    this.isBubbleOpen = false;
+  }
+
+  // Triggers immediate opening behavior when user flips profile view switch back to ON
+  onAiBotToggleChange(): void {
+    if (this.isAiBotEnabled && !this.isBubbleOpen) {
+      // this.openBotWithNewQuote();
+    } else if (!this.isAiBotEnabled) {
+      this.isBubbleOpen = false;
+    }
   }
 
   goBackToMotivation(): void {
@@ -99,7 +135,6 @@ export class DashboardLayout implements OnInit, OnDestroy {
     }, 20);
   }
 
-  // Generic frame layout handlers
   toggleSidebar(): void {
     if (typeof window !== 'undefined' && window.innerWidth <= 1024) {
       this.isMobileMenuOpen = !this.isMobileMenuOpen;
@@ -107,8 +142,30 @@ export class DashboardLayout implements OnInit, OnDestroy {
     }
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
   }
-  toggleProfile(): void { this.isProfilePanelOpen = !this.isProfilePanelOpen; this.isNotificationsPanelOpen = false; }
-  toggleNotifications(): void { this.isNotificationsPanelOpen = !this.isNotificationsPanelOpen; this.isProfilePanelOpen = false; }
-  closeAllPanels(): void { this.isMobileMenuOpen = false; this.isProfilePanelOpen = false; this.isNotificationsPanelOpen = false; }
-  logout(): void { localStorage.clear(); this.router.navigate(['/login']); }
+  
+  toggleProfile(): void { 
+    this.isProfilePanelOpen = !this.isProfilePanelOpen;
+    this.isNotificationsPanelOpen = false;
+  }
+  
+  toggleNotifications(): void { 
+    this.isNotificationsPanelOpen = !this.isNotificationsPanelOpen;
+    this.isProfilePanelOpen = false;
+  }
+  
+  closeAllPanels(): void { 
+    this.isMobileMenuOpen = false;
+    this.isProfilePanelOpen = false;
+    this.isNotificationsPanelOpen = false;
+  }
+
+  removeNotification(id: number, event: Event): void {
+    event.stopPropagation();
+    this.notificationsFeed = this.notificationsFeed.filter(n => n.id !== id);
+  }
+  
+  logout(): void { 
+    localStorage.clear();
+    this.router.navigate(['/login']);
+  }
 }
