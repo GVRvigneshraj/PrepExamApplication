@@ -21,7 +21,7 @@
   inset: 0;
   background: rgba(15, 23, 42, 0.45);
   backdrop-filter: blur(3px);
-  z-index: 150;
+  z-index: 200;
 }
 
 // Outer Sidebar Wrapper Panel Boundaries
@@ -36,7 +36,7 @@
               width 0.2s cubic-bezier(0.4, 0, 0.2, 1),
               min-width 0.2s cubic-bezier(0.4, 0, 0.2, 1),
               max-width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 200;
+  z-index: 100;
 }
 
 // Triggers sizing calculation changes during minimized state
@@ -190,6 +190,7 @@
     top: 0;
     transform: translateX(-100%);
     box-shadow: 12px 0 32px rgba(15, 23, 42, 0.12);
+    z-index:250;
   }
 
   .sidebar.mobile-open {
@@ -213,7 +214,8 @@
     padding: 0 16px;
   }
     .page-content {
-    padding: 16px 16px 96px;
+    // padding: 16px 16px 96px;
+    padding-bottom: 50px;
   }
 
 }
