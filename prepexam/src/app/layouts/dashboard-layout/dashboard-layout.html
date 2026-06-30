@@ -5,7 +5,7 @@
     <app-sidebar
       [collapsed]="isSidebarCollapsed"
       [mobileOpen]="isMobileMenuOpen"
-      (sidebarCollapseChange)="toggleSidebar()"
+      (toggleCollapse)="toggleSidebar()"
       (closeMobileMenu)="closeAllPanels()"
     ></app-sidebar>
   </aside>
@@ -26,40 +26,45 @@
       <router-outlet></router-outlet>
     </main>
 
-    <app-mobile-menu
-      *ngIf="!isProfilePanelOpen && !isNotificationsPanelOpen && !isMobileMenuOpen"
-    ></app-mobile-menu>
-  </div>
+    <div class="ai-motivation-bot" [class.bubble-open]="isBubbleOpen" [class.fullscreen-doubt]="copilotMode === 'doubt' && isBubbleOpen">
+      
+      <div class="bot-speech-bubble" *ngIf="isBubbleOpen">
+        <div class="mode-container" *ngIf="copilotMode === 'motivate'">
+          <div class="bubble-header">
+            <span><i class="fas fa-sparkles"></i> AI Co-Pilot</span>
+            <button type="button" class="close-bubble-btn" (click)="closeBubble($event)">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
 
-  <aside class="slide-panel notifications-panel" [class.open]="isNotificationsPanelOpen">
-    <div class="panel-header">
-      <h3>Notifications</h3>
-      <button type="button" class="panel-close" (click)="closeAllPanels()">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="panel-list">
-      <div class="panel-item">
-        <strong>Mock test reminder</strong>
-        <p>Your daily mock test starts in 30 mins.</p>
+          <p class="bot-message">
+            {{ displayedMessage }}<span class="typing-cursor" *ngIf="isTyping">|</span>
+          </p>
+          
+          <div class="motivation-actions-row">
+            <button type="button" class="switch-to-doubt-shortcut" (click)="switchCopilotMode('doubt')">
+              Ask a Doubt <i class="fas fa-comment-alt-question"></i>
+            </button>
+            <button type="button" class="action-mode-btn" (click)="generateNewQuote($event)" [disabled]="isTyping">
+              Next Advice <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="subcomponent-wrapper" *ngIf="copilotMode === 'doubt'">
+          <app-ai-chat 
+            (back)="goBackToMotivation()" 
+            (close)="closeBubble()">
+          </app-ai-chat>
+        </div>
       </div>
-    </div>
-  </aside>
 
-  <aside class="slide-panel profile-panel" [class.open]="isProfilePanelOpen">
-    <div class="panel-header">
-      <h3>Profile</h3>
-      <button type="button" class="panel-close" (click)="closeAllPanels()">
-        <i class="fas fa-times"></i>
+      <button class="bot-avatar-trigger" type="button" (click)="toggleBubble()" *ngIf="!(copilotMode === 'doubt' && isBubbleOpen)">
+        <div class="pulse-ring"></div>
+        <i class="fas fa-robot"></i>
       </button>
     </div>
-    <div class="profile-card">
-      <div class="profile-avatar">VR</div>
-      <h4>Vignesh Raj</h4>
-      <p>Student • JEE Aspirant</p>
-    </div>
-    <div class="panel-list">
-      <button class="panel-item action-item" type="button" (click)="logout()">Sign Out</button>
-    </div>
-  </aside>
+
+    <app-mobile-menu *ngIf="!isProfilePanelOpen && !isNotificationsPanelOpen && !isMobileMenuOpen"></app-mobile-menu>
+  </div>
 </div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewChecked, Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 export interface WhatsAppMessage {
@@ -13,95 +13,58 @@ export interface WhatsAppMessage {
   templateUrl: './ai-chat.html',
   styleUrl: './ai-chat.scss',
 })
-export class AiChat implements OnInit, AfterViewChecked {
-  
-  @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
-  @ViewChild('chatInput') private chatInput!: ElementRef;
+export class AiChat implements OnInit, OnDestroy {
+  @Output() back = new EventEmitter<void>();
+  @Output() close = new EventEmitter<void>();
 
-  messages = signal<WhatsAppMessage[]>([]);
-  userInputText = signal<string>('');
-  isAiThinking = signal<boolean>(false);
+  userQuery = '';
+  isTyping = false;
+  private typingTimer: any;
 
-  // Instant trigger upon module mounting initialization
-  ngOnInit(): void {
-    this.triggerOnloadGreeting();
+  chatHistory: { sender: 'bot' | 'user'; text: string }[] = [
+    { sender: 'bot', text: 'Ask me any concept doubt from your syllabus, and I will explain it instantly!' }
+  ];
+
+  ngOnInit(): void {}
+
+  ngOnDestroy(): void {
+    if (this.typingTimer) clearInterval(this.typingTimer);
   }
 
-  ngAfterViewChecked(): void {
-    this.scrollToBottom();
-  }
+  sendMessage(): void {
+    if (this.isTyping || !this.userQuery.trim()) return;
 
-  private triggerOnloadGreeting(): void {
-    const welcomeText = "Hello! I am your Gemini Academic Assistant. How can I help you analyze your performance metrics or study plan today? ✨";
+    const text = this.userQuery.trim();
+    this.userQuery = '';
+    this.chatHistory.push({ sender: 'user', text });
+
+    const explanation = `Regarding your query "${text}": Break the configuration setup down methodically, separate variables, and map expressions sequentially. Let me know if you need any specific equation steps analyzed!`;
     
-    // Slight pause for design aesthetics, then begin rendering text character-by-character
-    setTimeout(() => {
-      this.triggerCharacterStreamingAnimation(welcomeText);
-    }, 400);
-  }
+    this.isTyping = true;
+    let charIndex = 0;
+    const initialLen = this.chatHistory.push({ sender: 'bot', text: '' });
+    const targetIdx = initialLen - 1;
 
-  handleKeydown(event: any): void {
-    const keyboardEvent = event as KeyboardEvent;
-    if (keyboardEvent.key === 'Enter' && !keyboardEvent.shiftKey) {
-      keyboardEvent.preventDefault();
-      this.submitUserMessage();
-    }
-  }
-
-  submitUserMessage(): void {
-    const textSnapshot = this.userInputText().trim();
-    if (!textSnapshot || this.isAiThinking()) return;
-
-    this.messages.update(prev => [...prev, { sender: 'user', text: textSnapshot }]);
-    this.userInputText.set('');
-    this.resetInputHeight();
-
-    this.isAiThinking.set(true);
-    
-    setTimeout(() => {
-      this.isAiThinking.set(false);
-      const aiReply = "Looking over your metrics, your Mathematics accuracy is a solid 92%. However, your Chemistry average dropped to 68%. I suggest we launch a focused 10-question practice set right now to clean up those areas.";
-      this.triggerCharacterStreamingAnimation(aiReply);
-    }, 1200);
-  }
-
-  private triggerCharacterStreamingAnimation(fullOutputText: string): void {
-    this.messages.update(prev => [...prev, { sender: 'ai', text: '' }]);
-    
-    let charIdx = 0;
-    const totalChars = fullOutputText.length;
-    
-    const streamInterval = setInterval(() => {
-      if (charIdx < totalChars) {
-        const structuralChunk = fullOutputText.substring(0, charIdx + 1);
-        
-        this.messages.update(prev => {
-          const freshCopy = [...prev];
-          freshCopy[freshCopy.length - 1] = { sender: 'ai', text: structuralChunk };
-          return freshCopy;
-        });
-        
-        charIdx++;
-        this.scrollToBottom(); // Auto-scroll downward dynamically on every printed letter!
+    // FIX: Variables synchronized correctly to prevent compilation loop error
+    this.typingTimer = setInterval(() => {
+      if (charIndex < explanation.length) {
+        this.chatHistory[targetIdx].text += explanation.charAt(charIndex);
+        charIndex++;
+        this.scrollToBottom();
       } else {
-        clearInterval(streamInterval);
+        clearInterval(this.typingTimer);
+        this.isTyping = false;
       }
-    }, 15);
-  }
-
-  formatMessageTime(): string {
-    return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    }, 12);
   }
 
   private scrollToBottom(): void {
-    try {
-      this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
-    } catch (err) {}
+    setTimeout(() => {
+      const element = document.getElementById('subChatScroller');
+      if (element) element.scrollTop = element.scrollHeight;
+    }, 10);
   }
 
-  private resetInputHeight(): void {
-    if (this.chatInput) {
-      this.chatInput.nativeElement.style.height = 'auto';
-    }
-  }
+  onBack(): void { if (!this.isTyping) this.back.emit(); }
+  onClose(): void { this.close.emit(); }
 }
