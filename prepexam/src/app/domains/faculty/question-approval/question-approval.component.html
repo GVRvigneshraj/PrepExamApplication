@@ -1,0 +1,60 @@
+<div class="approval-container">
+  <div class="page-header">
+    <h1>Question Approval</h1>
+    <p>Review and approve submitted questions</p>
+  </div>
+
+  <div class="tab-bar">
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'pending'" (click)="setTab('pending')">
+      Pending ({{ pendingQuestions().length }})
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'approved'" (click)="setTab('approved')">
+      Approved ({{ approvedQuestions().length }})
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'rejected'" (click)="setTab('rejected')">
+      Rejected ({{ rejectedQuestions().length }})
+    </button>
+  </div>
+
+  <div class="questions-list">
+    <!-- Pending -->
+    <ng-container *ngIf="activeTab() === 'pending'">
+      <div class="question-card pending" *ngFor="let q of pendingQuestions()">
+        <div class="q-header">
+          <span class="subject-tag" [style.background]="getSubjectColor(q.subject)">{{ q.subject }}</span>
+          <span class="diff-tag" [style.color]="getDifficultyColor(q.difficulty)">{{ q.difficulty }}</span>
+        </div>
+        <p class="q-text">{{ q.questionText }}</p>
+        <p class="q-meta">Chapter: {{ q.chapter }} &middot; By: {{ q.submittedBy }} &middot; {{ q.submittedAt }}</p>
+        <div class="q-actions">
+          <button class="btn-approve" (click)="approveQuestion(q.id)"><i class="fas fa-check"></i> Approve</button>
+          <button class="btn-reject" (click)="rejectQuestion(q.id)"><i class="fas fa-times"></i> Reject</button>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Approved -->
+    <ng-container *ngIf="activeTab() === 'approved'">
+      <div class="question-card approved" *ngFor="let q of approvedQuestions()">
+        <div class="q-header">
+          <span class="subject-tag" [style.background]="getSubjectColor(q.subject)">{{ q.subject }}</span>
+          <span class="status-badge approved"><i class="fas fa-check-circle"></i> Approved</span>
+        </div>
+        <p class="q-text">{{ q.questionText }}</p>
+        <p class="q-meta">Chapter: {{ q.chapter }} &middot; Approved: {{ q.approvedAt }}</p>
+      </div>
+    </ng-container>
+
+    <!-- Rejected -->
+    <ng-container *ngIf="activeTab() === 'rejected'">
+      <div class="question-card rejected" *ngFor="let q of rejectedQuestions()">
+        <div class="q-header">
+          <span class="subject-tag" [style.background]="getSubjectColor(q.subject)">{{ q.subject }}</span>
+          <span class="status-badge rejected"><i class="fas fa-times-circle"></i> Rejected</span>
+        </div>
+        <p class="q-text">{{ q.questionText }}</p>
+        <p class="q-meta">Reason: {{ q.reason }} &middot; Rejected: {{ q.rejectedAt }}</p>
+      </div>
+    </ng-container>
+  </div>
+</div>

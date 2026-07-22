@@ -1,0 +1,67 @@
+<div class="revision-container">
+  <div class="page-header">
+    <div>
+      <h1>Revision</h1>
+      <p>Spaced repetition for better retention</p>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'upcoming'" (click)="setTab('upcoming')">
+      <i class="fas fa-clock"></i> Upcoming ({{ upcomingRevisions().length }})
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'completed'" (click)="setTab('completed')">
+      <i class="fas fa-check-circle"></i> Completed ({{ completedRevisions().length }})
+    </button>
+  </div>
+
+  <!-- Upcoming -->
+  <div class="revision-list" *ngIf="activeTab() === 'upcoming'">
+    <div class="revision-card" *ngFor="let item of upcomingRevisions()">
+      <div class="revision-icon" [style.background]="getSubjectColor(item.subject) + '15'" [style.color]="getSubjectColor(item.subject)">
+        <i [class]="getSubjectIcon(item.subject)"></i>
+      </div>
+      <div class="revision-info">
+        <h4>{{ item.topic }}</h4>
+        <p>{{ item.subject }} &middot; {{ item.chapter }}</p>
+        <div class="revision-meta">
+          <span class="next-review" [class.urgent]="item.nextReview === 'Today'">
+            <i class="fas fa-clock"></i> {{ item.nextReview }}
+          </span>
+          <span class="interval">Every {{ item.interval }}</span>
+        </div>
+      </div>
+      <div class="mastery-circle">
+        <svg viewBox="0 0 36 36">
+          <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#e2e8f0" stroke-width="3" />
+          <path class="circle-fill" [attr.stroke]="getMasteryColor(item.mastery)" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3" [attr.stroke-dasharray]="item.mastery + ', 100'" stroke-linecap="round" />
+        </svg>
+        <span class="mastery-text">{{ item.mastery }}%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completed -->
+  <div class="revision-list" *ngIf="activeTab() === 'completed'">
+    <div class="revision-card" *ngFor="let item of completedRevisions()">
+      <div class="revision-icon" [style.background]="getSubjectColor(item.subject) + '15'" [style.color]="getSubjectColor(item.subject)">
+        <i [class]="getSubjectIcon(item.subject)"></i>
+      </div>
+      <div class="revision-info">
+        <h4>{{ item.topic }}</h4>
+        <p>{{ item.subject }} &middot; {{ item.chapter }}</p>
+        <div class="revision-meta">
+          <span class="date"><i class="far fa-calendar"></i> {{ item.lastReviewed }}</span>
+          <span class="revisions">{{ item.totalRevisions }} revisions</span>
+        </div>
+      </div>
+      <div class="mastery-circle">
+        <svg viewBox="0 0 36 36">
+          <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#e2e8f0" stroke-width="3" />
+          <path class="circle-fill" [attr.stroke]="getMasteryColor(item.mastery)" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3" [attr.stroke-dasharray]="item.mastery + ', 100'" stroke-linecap="round" />
+        </svg>
+        <span class="mastery-text">{{ item.mastery }}%</span>
+      </div>
+    </div>
+  </div>
+</div>

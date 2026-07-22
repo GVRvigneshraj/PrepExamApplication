@@ -1,0 +1,35 @@
+import { environment } from '../../../../environments/environment';
+
+const BASE = environment.apiBaseUrl;
+
+export const AdminEndpoints = {
+  GET_DASHBOARD: `${BASE}/admin/dashboard`,
+  GET_USERS: `${BASE}/admin/users`,
+  CREATE_USER: `${BASE}/admin/users`,
+  UPDATE_USER: `${BASE}/admin/users`,
+  DELETE_USER: `${BASE}/admin/users`,
+  GET_FACULTY: `${BASE}/admin/faculty`,
+  CREATE_FACULTY: `${BASE}/admin/faculty`,
+  GET_STUDENTS: `${BASE}/admin/students`,
+  CREATE_STUDENT: `${BASE}/admin/students`,
+  GET_EXAMS: `${BASE}/admin/exams`,
+  CREATE_EXAM: `${BASE}/admin/exams`,
+  UPDATE_EXAM: `${BASE}/admin/exams`,
+  DELETE_EXAM: `${BASE}/admin/exams`,
+  GET_SUBJECTS: `${BASE}/admin/subjects`,
+  CREATE_SUBJECT: `${BASE}/admin/subjects`,
+  GET_CHAPTERS: `${BASE}/admin/chapters`,
+  CREATE_CHAPTER: `${BASE}/admin/chapters`,
+  GET_ROLES: `${BASE}/admin/roles`,
+  CREATE_ROLE: `${BASE}/admin/roles`,
+  GET_PERMISSIONS: `${BASE}/admin/permissions`,
+  CREATE_PERMISSION: `${BASE}/admin/permissions`,
+  GET_SUBSCRIPTIONS: `${BASE}/admin/subscriptions`,
+  CREATE_SUBSCRIPTION: `${BASE}/admin/subscriptions`,
+  GET_ANALYTICS: `${BASE}/admin/analytics`,
+  GET_AUDIT_LOGS: `${BASE}/admin/audit-logs`,
+  GET_SETTINGS: `${BASE}/admin/settings`,
+  UPDATE_SETTINGS: `${BASE}/admin/settings`,
+  GET_NOTIFICATIONS: `${BASE}/admin/notifications`,
+  SEND_NOTIFICATION: `${BASE}/admin/notifications`,
+} as const;

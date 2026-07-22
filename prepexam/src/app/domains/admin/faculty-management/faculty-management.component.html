@@ -1,0 +1,46 @@
+<div class="management-container">
+  <div class="page-header">
+    <div>
+      <h1>Faculty Management</h1>
+      <p>Manage faculty members and their access</p>
+    </div>
+    <button class="btn-primary"><i class="fas fa-plus"></i> Add Faculty</button>
+  </div>
+
+  <div class="search-bar">
+    <i class="fas fa-search"></i>
+    <input type="text" placeholder="Search faculty..." [ngModel]="searchTerm()" (ngModelChange)="onSearch($event)" />
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Department</th>
+          <th>Questions</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let f of filteredFaculty">
+          <td><div class="name-cell"><div class="avatar">{{ f.name.charAt(0) }}</div>{{ f.name }}</div></td>
+          <td>{{ f.email }}</td>
+          <td><span class="dept-tag">{{ f.department }}</span></td>
+          <td>{{ f.questionsCreated }}</td>
+          <td><span class="status-badge" [ngClass]="f.status">{{ f.status }}</span></td>
+          <td>
+            <div class="actions">
+              <button class="icon-btn" (click)="toggleStatus(f.id)" [title]="f.status === 'active' ? 'Deactivate' : 'Activate'">
+                <i [class]="f.status === 'active' ? 'fas fa-ban' : 'fas fa-check'"></i>
+              </button>
+              <button class="icon-btn danger" (click)="deleteFaculty(f.id)"><i class="fas fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

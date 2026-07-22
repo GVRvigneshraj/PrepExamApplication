@@ -1,0 +1,54 @@
+<div class="achievements-container">
+  <div class="page-header">
+    <div>
+      <h1>Achievements</h1>
+      <p>Your milestones and rewards</p>
+    </div>
+    <div class="xp-display">
+      <span class="xp-value">{{ earnedAchievements().length * 150 | number }}</span>
+      <span class="xp-label">Total XP Earned</span>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'earned'" (click)="setTab('earned')">
+      <i class="fas fa-trophy"></i> Earned ({{ earnedAchievements().length }})
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'locked'" (click)="setTab('locked')">
+      <i class="fas fa-lock"></i> Locked ({{ lockedAchievements().length }})
+    </button>
+  </div>
+
+  <!-- Earned -->
+  <div class="achievements-grid" *ngIf="activeTab() === 'earned'">
+    <div class="achievement-card earned" *ngFor="let ach of earnedAchievements()">
+      <div class="ach-icon" [style.background]="getCategoryColor(ach.category) + '15'" [style.color]="getCategoryColor(ach.category)">
+        <i [class]="ach.icon"></i>
+      </div>
+      <h4>{{ ach.title }}</h4>
+      <p>{{ ach.description }}</p>
+      <div class="ach-footer">
+        <span class="xp-badge">+{{ ach.xp }} XP</span>
+        <span class="date">{{ ach.earnedAt }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Locked -->
+  <div class="achievements-grid" *ngIf="activeTab() === 'locked'">
+    <div class="achievement-card locked" *ngFor="let ach of lockedAchievements()">
+      <div class="ach-icon locked-icon">
+        <i [class]="ach.icon"></i>
+      </div>
+      <h4>{{ ach.title }}</h4>
+      <p>{{ ach.description }}</p>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="(ach.progress / ach.target) * 100"></div>
+      </div>
+      <div class="ach-footer">
+        <span class="progress-text">{{ ach.progress }} / {{ ach.target }}</span>
+        <span class="xp-badge locked-xp">+{{ ach.xp }} XP</span>
+      </div>
+    </div>
+  </div>
+</div>

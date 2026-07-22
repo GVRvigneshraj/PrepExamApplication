@@ -1,0 +1,1292 @@
+You are a Senior Software Architect with 15+ years of experience building enterprise Angular applications.
+
+Design a production-ready Angular 20+ project architecture for an AI-powered Exam Preparation Platform.
+
+Do NOT create a beginner folder structure.
+
+Follow enterprise architecture used in large companies like Microsoft, Google, Amazon and enterprise SaaS products.
+
+The application must be scalable enough to support millions of students and multiple frontend teams.
+
+==================================================
+APPLICATION
+==================================================
+
+Application Name:
+PrepExam AI
+
+Purpose:
+
+AI-powered learning platform supporting
+
+• Student Portal
+• Faculty Portal
+• Admin Portal
+
+The application supports multiple exams
+
+NEET
+JEE
+UPSC
+SSC
+TNPSC
+Railway
+Banking
+Defence
+State Exams
+
+Every exam has
+
+Subjects
+
+Units
+
+Chapters
+
+Topics
+
+Lessons
+
+MCQs
+
+Mock Tests
+
+Revision
+
+Analytics
+
+==================================================
+ROLES
+==================================================
+
+Three completely separated applications inside one Angular workspace.
+
+Student
+
+Faculty
+
+Admin
+
+Each role must have
+
+Own dashboard
+
+Own routing
+
+Own layout
+
+Own guards
+
+Own menus
+
+Own permissions
+
+Own services
+
+Own state
+
+Own components
+
+No role should access another role's pages.
+
+==================================================
+ARCHITECTURE
+==================================================
+
+Follow Feature Based + Domain Driven Architecture.
+
+Avoid dumping everything into one "shared" folder.
+
+Group code by business domain.
+
+Example
+
+Student
+
+Assessment
+
+Mock Test
+
+Question
+
+Report
+
+Faculty
+
+Question Management
+
+Mock Management
+
+Student Progress
+
+Content
+
+Admin
+
+Users
+
+Roles
+
+Permissions
+
+System Settings
+
+Subscription
+
+Analytics
+
+==================================================
+CORE LAYER
+==================================================
+
+Create Core module containing only application-wide services.
+
+Examples
+
+Authentication
+
+Authorization
+
+JWT
+
+API Client
+
+HTTP Interceptor
+
+Error Handler
+
+Logger
+
+Storage
+
+Configuration
+
+Guards
+
+Global Constants
+
+Environment
+
+Utilities
+
+==================================================
+SHARED LAYER
+==================================================
+
+Shared folder must contain reusable UI only.
+
+Buttons
+
+Cards
+
+Dialogs
+
+Tables
+
+Charts
+
+Loaders
+
+Pipes
+
+Directives
+
+Validators
+
+Common Components
+
+No business logic inside Shared.
+
+==================================================
+LAYOUTS
+==================================================
+
+Separate layouts.
+
+Auth Layout
+
+Student Layout
+
+Faculty Layout
+
+Admin Layout
+
+Landing Layout
+
+Error Layout
+
+Each layout has
+
+Header
+
+Sidebar
+
+Footer
+
+Breadcrumb
+
+Notifications
+
+Theme
+
+==================================================
+FEATURE MODULES
+==================================================
+
+Student Features
+
+Dashboard
+
+Daily Practice
+
+Assessment
+
+Mock Test
+
+Practice
+
+Subjects
+
+Chapters
+
+Topics
+
+Bookmarks
+
+Revision
+
+Weak Areas
+
+Leaderboard
+
+Reports
+
+Achievements
+
+AI Tutor
+
+AI Chat
+
+Notifications
+
+Profile
+
+Settings
+
+Faculty Features
+
+Dashboard
+
+Question Bank
+
+Question Approval
+
+Question Import
+
+Question Editor
+
+Mock Test Builder
+
+Assignments
+
+Student Analytics
+
+Content Management
+
+Reports
+
+Notifications
+
+Profile
+
+Settings
+
+Admin Features
+
+Dashboard
+
+User Management
+
+Faculty Management
+
+Student Management
+
+Exam Management
+
+Subject Management
+
+Chapter Management
+
+Question Management
+
+Role Management
+
+Permission Management
+
+Subscription Plans
+
+Coupons
+
+Payments
+
+Reports
+
+Analytics
+
+Audit Logs
+
+Notifications
+
+Settings
+
+==================================================
+STATE MANAGEMENT
+==================================================
+
+Organize state by feature.
+
+Student State
+
+Faculty State
+
+Admin State
+
+Auth State
+
+Settings State
+
+Notification State
+
+Avoid global variables.
+
+==================================================
+MODELS
+==================================================
+
+Separate models by domain.
+
+Example
+
+auth
+
+student
+
+faculty
+
+admin
+
+assessment
+
+question
+
+report
+
+exam
+
+notification
+
+analytics
+
+==================================================
+API
+==================================================
+
+Create API layer.
+
+Api Client
+
+Endpoints
+
+DTOs
+
+Requests
+
+Responses
+
+Mapper
+
+Repository Pattern
+
+==================================================
+CONFIGURATION
+==================================================
+
+Separate configuration.
+
+Exam Config
+
+Theme Config
+
+Permission Config
+
+Route Config
+
+Feature Flag Config
+
+Application Config
+
+==================================================
+ASSETS
+==================================================
+
+Organize assets.
+
+images
+
+icons
+
+animations
+
+fonts
+
+json
+
+mock-data
+
+exam-data
+
+translations
+
+==================================================
+CODE QUALITY
+==================================================
+
+Use
+
+Standalone Components
+
+Lazy Loading
+
+Route Level Code Splitting
+
+Signals where appropriate
+
+Strict TypeScript
+
+SCSS
+
+Reusable Components
+
+Dependency Injection
+
+SOLID Principles
+
+Clean Architecture
+
+No duplicated code.
+
+==================================================
+OUTPUT
+==================================================
+
+Generate ONLY the project folder structure.
+
+Do not generate implementation code.
+
+Display as a complete tree.
+
+Include every folder.
+
+Mark each folder with a short description.
+
+The architecture must look like a real enterprise Angular application used by a large EdTech company.
+
+
+src/
+│
+├── app/
+│
+├── core/
+│   ├── auth/
+│   ├── api/
+│   ├── config/
+│   ├── guards/
+│   ├── interceptors/
+│   ├── permissions/
+│   ├── services/
+│   ├── state/
+│   └── utils/
+│
+├── shared/
+│   ├── components/
+│   ├── directives/
+│   ├── pipes/
+│   ├── validators/
+│   ├── ui/
+│   └── layouts/
+│
+├── domains/
+│
+│   ├── student/
+│   │   ├── dashboard/
+│   │   ├── assessment/
+│   │   ├── practice/
+│   │   ├── mock/
+│   │   ├── ai/
+│   │   ├── reports/
+│   │   ├── profile/
+│   │   ├── state/
+│   │   ├── services/
+│   │   └── routes/
+│   │
+│   ├── faculty/
+│   │   ├── dashboard/
+│   │   ├── question-bank/
+│   │   ├── mock-builder/
+│   │   ├── analytics/
+│   │   ├── reports/
+│   │   ├── services/
+│   │   ├── state/
+│   │   └── routes/
+│   │
+│   ├── admin/
+│   │   ├── dashboard/
+│   │   ├── users/
+│   │   ├── faculty/
+│   │   ├── students/
+│   │   ├── exams/
+│   │   ├── permissions/
+│   │   ├── subscriptions/
+│   │   ├── analytics/
+│   │   ├── settings/
+│   │   ├── services/
+│   │   ├── state/
+│   │   └── routes/
+│   │
+│   ├── assessment/
+│   ├── exams/
+│   ├── questions/
+│   ├── notifications/
+│   ├── ai/
+│   └── analytics/
+│
+├── assets/
+├── environments/
+└── styles/
+
+
+# Mimo AI Prompt – Enterprise Student Workflow (Angular 20)
+
+You are a Principal Angular Architect with 15+ years of experience building enterprise EdTech platforms.
+
+Your task is to generate a production-ready Angular 20 application.
+
+Do NOT generate a demo project.
+
+Build the application exactly like a real enterprise SaaS product.
+
+---
+
+# Application
+
+PrepExam AI
+
+AI Powered Exam Preparation Platform
+
+Roles
+
+• Student
+• Faculty
+• Admin
+
+Authentication is common for all roles.
+
+---
+
+# Authentication Flow
+
+Create one common authentication module.
+
+Pages
+
+Login
+
+Register
+
+Forgot Password
+
+OTP Verification
+
+Reset Password
+
+Refresh Token
+
+JWT Authentication
+
+Access Token
+
+Refresh Token
+
+Silent Refresh
+
+Remember Me
+
+Auto Login
+
+Logout
+
+Auto Logout
+
+Session Timeout
+
+The Login page is shared by every role.
+
+After successful login
+
+Backend returns
+
+Access Token
+
+Refresh Token
+
+Role
+
+User Details
+
+Application should automatically determine the user role.
+
+Never hardcode navigation.
+
+Navigation must be dynamic.
+
+Example
+
+If role == STUDENT
+
+Navigate to Student Module.
+
+If role == FACULTY
+
+Navigate to Faculty Module.
+
+If role == ADMIN
+
+Navigate to Admin Module.
+
+All routes must be protected using Route Guards.
+
+Refresh Token must automatically generate a new Access Token before expiration.
+
+No user interaction should be required.
+
+Retry the original request after refresh.
+
+If Refresh Token expires
+
+Logout automatically.
+
+Redirect to Login.
+
+---
+
+# Student First Login Workflow
+
+Student logs in for the first time.
+
+Check
+
+hasCompletedOnboarding
+
+If false
+
+Navigate to
+
+/student/onboarding
+
+The onboarding contains
+
+Step 1
+
+Welcome Screen
+
+Step 2
+
+Choose Exam
+
+NEET
+
+JEE
+
+UPSC
+
+SSC
+
+TNPSC
+
+Railway
+
+Banking
+
+Defence
+
+Step 3
+
+Choose Target Score
+
+Step 4
+
+Choose Daily Study Hours
+
+Step 5
+
+Choose Preferred Language
+
+Step 6
+
+Generate AI Study Plan
+
+Step 7
+
+Start Initial Assessment
+
+Student cannot access Dashboard before completing onboarding.
+
+---
+
+# Initial Assessment
+
+After onboarding
+
+Automatically start
+
+Diagnostic Assessment.
+
+This assessment is mandatory.
+
+Purpose
+
+Find current knowledge level.
+
+Weak Areas
+
+Strong Areas
+
+Difficulty
+
+Estimated Rank
+
+Learning Path
+
+After submission
+
+Generate
+
+AI Dashboard Data
+
+Student Level
+
+Study Plan
+
+Daily Practice
+
+Recommended Chapters
+
+Weak Topics
+
+Strong Topics
+
+Dashboard Cards
+
+Dashboard Widgets
+
+Leaderboard Position
+
+Achievements
+
+Only after Diagnostic Test
+
+Dashboard becomes available.
+
+---
+
+# Student Workflow
+
+Login
+
+↓
+
+Onboarding
+
+↓
+
+Diagnostic Assessment
+
+↓
+
+Dashboard
+
+↓
+
+Daily Practice
+
+↓
+
+Assessment
+
+↓
+
+Mock Test
+
+↓
+
+Reports
+
+↓
+
+Leaderboard
+
+↓
+
+Profile
+
+↓
+
+Settings
+
+Student sidebar should be generated only after onboarding.
+
+---
+
+# Dashboard
+
+Dashboard should contain
+
+AI Greeting
+
+Daily Goal
+
+Today's Practice
+
+Study Streak
+
+XP
+
+Coins
+
+Current Level
+
+Target Score
+
+Exam Progress
+
+Overall Accuracy
+
+Subject Progress
+
+Weak Chapters
+
+Strong Chapters
+
+Continue Learning
+
+Upcoming Mock
+
+Latest Report
+
+Leaderboard Rank
+
+Notifications
+
+Recent Activity
+
+Everything should use static JSON data.
+
+No backend implementation.
+
+---
+
+# Universal Test Engine
+
+Very Important
+
+Do NOT create different Test Components.
+
+Create ONE reusable Test Engine.
+
+Assessment
+
+Mock Test
+
+Practice Test
+
+Chapter Test
+
+Topic Test
+
+Revision Test
+
+Weekly Test
+
+Previous Year Questions
+
+Daily Practice
+
+should all use the same component.
+
+Only configuration changes.
+
+Example
+
+/student/test/:testType/:id
+
+Examples
+
+/student/test/assessment/1
+
+/student/test/mock/5
+
+/student/test/practice/12
+
+/student/test/revision/2
+
+The component should load JSON configuration.
+
+Different Header
+
+Different Rules
+
+Different Timer
+
+Different Result Screen
+
+Different Navigation
+
+Different Question Count
+
+Different Scoring
+
+Everything should be dynamic.
+
+No duplicate pages.
+
+---
+
+# Universal Test Features
+
+Question Navigation
+
+Question Palette
+
+Question Timer
+
+Global Timer
+
+Bookmark
+
+Mark for Review
+
+Skip
+
+Save & Next
+
+Previous
+
+Next
+
+Auto Save
+
+Resume Test
+
+Submit Confirmation
+
+Progress Bar
+
+Question Number
+
+Image Questions
+
+Math Questions
+
+Paragraph Questions
+
+Solution View
+
+Result Summary
+
+Review Answers
+
+Performance Analytics
+
+The UI must support every test type without code duplication.
+
+---
+
+# Routing
+
+/auth
+
+/student
+
+/student/dashboard
+
+/student/onboarding
+
+/student/daily-practice
+
+/student/assessment
+
+/student/mock
+
+/student/reports
+
+/student/leaderboard
+
+/student/profile
+
+/student/settings
+
+/student/test/:testType/:id
+
+Faculty and Admin routes should remain isolated.
+
+---
+
+# Layout
+
+Before Login
+
+Auth Layout
+
+After Student Login
+
+Student Layout
+
+Student Layout contains
+
+Header
+
+Sidebar
+
+Breadcrumb
+
+Notification Panel
+
+Footer
+
+Mobile Navigation
+
+Theme Switcher
+
+Sidebar should be generated dynamically.
+
+---
+
+# Data
+
+Use static JSON.
+
+Create Services.
+
+Later backend APIs will replace the JSON.
+
+Never hardcode data inside components.
+
+---
+
+# Architecture
+
+Use Standalone Components.
+
+Lazy Loading.
+
+Feature Based Architecture.
+
+Signals where appropriate.
+
+Strong TypeScript.
+
+SOLID Principles.
+
+Clean Architecture.
+
+Reusable Components.
+
+No duplicate code.
+
+---
+
+# Output
+
+Generate
+
+Complete Angular folder structure.
+
+Routing.
+
+Layouts.
+
+Services.
+
+Guards.
+
+Interfaces.
+
+Models.
+
+Static JSON files.
+
+Navigation configuration.
+
+Universal Test Component architecture.
+
+Do NOT generate backend code.
+
+Do NOT use mock APIs.
+
+Only static JSON data and production-ready Angular architecture.
+
+
+
+# Header, Profile, Settings & Mobile Navigation Requirements
+
+## Header
+
+After the student logs in, every authenticated page must use a common enterprise Header.
+
+The Header should contain:
+
+* Application Logo
+* Current Exam Name
+* Current Page Title
+* Global Search
+* AI Assistant Button
+* Notifications Icon with unread badge
+* Theme Toggle (Light/Dark)
+* User Avatar
+* Profile Dropdown
+
+The Profile Dropdown should contain:
+
+* My Profile
+* My Progress
+* Settings
+* Help & Support
+* Privacy Policy
+* About Application
+* Logout
+
+The Header must remain fixed while scrolling.
+
+---
+
+# Settings Module
+
+Create a dedicated Settings page.
+
+Settings should be organized into sections:
+
+## Account
+
+* Edit Profile
+* Change Password
+* Update Email
+* Update Mobile Number
+
+## Learning
+
+* Preferred Language
+* Daily Goal
+* Target Score
+* Study Hours
+* Default Exam
+
+## Appearance
+
+* Dark Mode
+* Light Mode
+* System Theme
+* Font Size
+
+## Notifications
+
+* Push Notifications
+* Email Notifications
+* Reminder Notifications
+* Daily Practice Reminder
+
+## Privacy
+
+* Login Sessions
+* Devices
+* Security Settings
+
+## About
+
+* App Version
+* Terms & Conditions
+* Privacy Policy
+* Contact Support
+
+---
+
+# Responsive Layout
+
+The application must be Mobile First.
+
+Desktop
+
+* Left Sidebar
+* Fixed Header
+* Main Content
+
+Tablet
+
+* Collapsible Sidebar
+* Fixed Header
+
+Mobile
+
+Do NOT show the Sidebar.
+
+Instead create a Bottom Navigation Bar similar to native mobile applications.
+
+The Bottom Navigation must remain fixed at the bottom.
+
+The Bottom Navigation should contain exactly five items.
+
+1. Home
+2. Practice
+3. AI Tutor
+4. Reports
+5. Profile
+
+Each menu item should have an icon and label.
+
+The active menu should be highlighted.
+
+The Bottom Navigation should support badges for notifications if required.
+
+---
+
+# Mobile Navigation
+
+When the screen width is below the mobile breakpoint:
+
+* Hide the Sidebar completely.
+* Show the Bottom Navigation.
+* Keep the Header visible.
+* The Header should include a hamburger menu only for secondary options if needed.
+* Navigation must feel like a native Android/iOS application.
+
+Profile and Settings should be accessible from:
+
+* Header Avatar
+* Bottom Navigation (Profile)
+
+---
+
+# UI Requirements
+
+Use modern enterprise UI with:
+
+* Glassmorphism cards
+* Smooth animations
+* Rounded corners
+* Material Symbols icons
+* Responsive spacing
+* Touch-friendly controls
+* Sticky Header
+* Sticky Bottom Navigation (mobile only)
+* Smooth page transitions
+
+The layout should feel like a premium mobile application while remaining fully responsive on tablets and desktops.

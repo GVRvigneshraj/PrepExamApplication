@@ -1,0 +1,276 @@
+<div class="app">
+
+  <!-- ═══ Level Hero ═══ -->
+  <div class="level-hero anim">
+    <div class="lh-top">
+      <div class="lh-left">
+        <div class="lh-badge">Lv.{{ user.level }}</div>
+        <div class="lh-info">
+          <div class="lh-label">Your Level</div>
+          <div class="lh-title">{{ user.levelTitle }}</div>
+        </div>
+      </div>
+      <div class="lh-right">
+        <div class="lh-xp-label">Experience</div>
+        <div class="lh-xp-val">{{ user.xpCurrent | number }} XP</div>
+      </div>
+    </div>
+    <div class="lh-bar">
+      <div class="lh-bar-fill" [style.width.%]="xpPercent"></div>
+    </div>
+    <div class="lh-bottom">
+      <div class="lh-greet">{{ greeting }}, <strong>{{ user.name }}!</strong> Consistency today, Rank tomorrow.</div>
+      <div class="lh-pill">
+        <i class="fas fa-fire" *ngIf="user.studyStreak > 0"></i>
+        <i class="fas fa-trophy" *ngIf="user.studyStreak === 0"></i>
+        <span *ngIf="user.studyStreak > 0">{{ user.studyStreak }} day streak</span>
+        <span *ngIf="user.studyStreak === 0">{{ examScore }}/{{ examTotal }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Quick Actions ═══ -->
+  <div class="qa-grid anim">
+    <a class="qa" *ngFor="let action of quickActions"
+       [routerLink]="action.route"
+       routerLinkActive="active">
+      <div class="qa-icon" [ngClass]="action.colorClass">
+        <i [class]="action.icon"></i>
+      </div>
+      <div class="qa-label">{{ action.label }}</div>
+    </a>
+  </div>
+
+  <!-- ═══ Dashboard Body: 2-col on desktop ═══ -->
+  <div class="dash-body">
+
+    <!-- LEFT COLUMN -->
+    <div class="dash-left">
+
+      <!-- AI Insight -->
+      <div class="ai-card anim">
+        <div class="ai-head">
+          <div class="ai-head-left">
+            <div class="ai-icon"><i class="fas fa-robot"></i></div>
+            <div class="ai-title">AI Insight</div>
+          </div>
+          <div class="ai-badge" [ngClass]="{
+            'ai-badge-info': aiSummary?.title === 'Welcome',
+            'ai-badge-warning': aiSummary?.title !== 'Welcome'
+          }">{{ aiSummary?.title || 'Insight' }}</div>
+        </div>
+        <div class="ai-body" [innerHTML]="aiAdvice"></div>
+        <button class="ai-btn" (click)="onViewAdvice()">
+          <i class="fas fa-wand-magic-sparkles"></i> View Advice
+        </button>
+      </div>
+
+      <!-- Today's Goal -->
+      <div class="section-row anim">
+        <div class="section-title">Today's Goal</div>
+        <div class="tasks-count-inline" *ngIf="!isLoading">
+          {{ completedCount }}<small>/{{ totalTaskCount }}</small>
+        </div>
+      </div>
+
+      <div class="tasks-card anim">
+
+        <!-- Loading State -->
+        <ng-container *ngIf="isLoading">
+          <div class="skeleton-row" *ngFor="let i of [1,2,3,4]">
+            <div class="skel skel-check"></div>
+            <div class="skel skel-line"></div>
+            <div class="skel skel-tag"></div>
+          </div>
+        </ng-container>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="!isLoading && tasks.length === 0">
+          <div class="empty-icon"><i class="fas fa-calendar-check"></i></div>
+          <div class="empty-title">No Tasks Today</div>
+          <div class="empty-desc">Enjoy your free day or start a practice session.</div>
+        </div>
+
+        <!-- Task List -->
+        <ng-container *ngIf="!isLoading && tasks.length > 0">
+          <div class="tasks-progress-header">
+            <div class="tasks-meta">
+              <div class="tasks-progress-text">Progress</div>
+              <div class="tasks-count">{{ completedCount }}<small>/{{ totalTaskCount }} Completed</small></div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="taskProgress"></div>
+            </div>
+          </div>
+
+          <div class="tasks-study-time" *ngIf="totalStudyMinutes > 0">
+            <i class="fas fa-clock"></i>
+            <span>{{ totalStudyMinutes }} min study today</span>
+            <span class="study-tag" *ngIf="taskProgress >= 100">
+              <i class="fas fa-check-circle"></i> Goal Complete
+            </span>
+          </div>
+
+          <div class="task-row" *ngFor="let task of tasks; let i = index"
+               [class.done]="isTaskDone(task)"
+               [class.in-progress]="isTaskInProgress(task)"
+               [class.clickable]="!isTaskDone(task) && !isTaskInProgress(task)">
+            <div class="task-check" [class.done]="isTaskDone(task)" [class.in-progress]="isTaskInProgress(task)">
+              <i *ngIf="isTaskDone(task) && !isTaskSkipped(task)" class="fas fa-check"></i>
+              <i *ngIf="isTaskSkipped(task)" class="fas fa-forward"></i>
+              <i *ngIf="isTaskInProgress(task)" class="fas fa-spinner fa-spin"></i>
+              <span *ngIf="!isTaskDone(task) && !isTaskInProgress(task)" class="task-order">{{ i + 1 }}</span>
+            </div>
+            <div class="task-content">
+              <span class="task-text" [class.done]="isTaskDone(task)">{{ getTaskTitleShort(task) }}</span>
+              <span class="task-meta">
+                <span class="task-subject-label" *ngIf="task.subjectName" [style.color]="getSubjectColor(task.subjectName)">{{ task.subjectName }}</span>
+                <i class="fas fa-clock"></i> {{ task.estimatedMinutes }}min
+                <ng-container *ngIf="task.estimatedQuestions"> · {{ task.estimatedQuestions }}Q</ng-container>
+                <span class="task-status-badge" *ngIf="isTaskInProgress(task)">In Progress</span>
+                <span class="task-status-badge task-status-skipped" *ngIf="isTaskSkipped(task)">Skipped</span>
+              </span>
+            </div>
+            <div class="task-right">
+              <ng-container *ngIf="!isTaskDone(task) && !isTaskInProgress(task)">
+                <button class="task-action-btn task-action-lesson" *ngIf="task.taskType === 'CHAPTER_LESSON'" (click)="startLesson(task)">
+                  Start Lesson
+                </button>
+                <button class="task-action-btn task-action-test" *ngIf="task.taskType === 'CHAPTER_TEST'" (click)="startTest(task)">
+                  Start Test
+                </button>
+                <button class="task-action-btn task-action-skip" (click)="skipTask(task)">
+                  Skip
+                </button>
+              </ng-container>
+              <span class="task-status-done" *ngIf="isTaskDone(task) && !isTaskSkipped(task)">
+                <i class="fas fa-check-circle"></i> Done
+              </span>
+              <span class="task-status-done task-status-skip-label" *ngIf="isTaskSkipped(task)">
+                <i class="fas fa-forward"></i> Skipped
+              </span>
+            </div>
+          </div>
+
+          <div class="tasks-summary">
+            <div class="summary-left">
+              <i class="fas fa-bullseye"></i>
+              <span>{{ taskProgress }}% of today's goal</span>
+            </div>
+            <div class="summary-streak">
+              <i class="fas fa-fire"></i> Keep going!
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="dash-right">
+
+      <!-- Stats Cards -->
+      <div class="stats-grid anim">
+        <div class="stat-card stat-score">
+          <div class="stat-label">Avg Score</div>
+          <div class="stat-value">{{ examScore }}</div>
+          <div class="stat-sub">out of {{ examTotal }} marks</div>
+          <div class="stat-bar stat-bar-blue">
+            <div class="stat-bar-fill stat-fill-blue" [style.width.%]="scorePercent"></div>
+          </div>
+        </div>
+        <div class="stat-card stat-weekly">
+          <div class="stat-label">Performance</div>
+          <div class="stat-value stat-value-purple">{{ weeklyChange }}%</div>
+          <div class="stat-sub">accuracy</div>
+          <div class="stat-bar stat-bar-purple">
+            <div class="stat-bar-fill stat-fill-purple" [style.width.%]="weeklyPercent"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exam Score Card -->
+      <div class="exam-card anim" #examCard>
+        <div class="exam-ring">
+          <svg viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="33" fill="none" stroke="rgba(124,92,252,0.07)" stroke-width="6"/>
+            <circle cx="40" cy="40" r="33" fill="none"
+              stroke="url(#examGrad)" stroke-width="6"
+              stroke-linecap="round"
+              stroke-dasharray="207.35"
+              [attr.stroke-dashoffset]="examRingOffset"/>
+            <defs>
+              <linearGradient id="examGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#7c5cfc"/>
+                <stop offset="100%" stop-color="#3b82f6"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="exam-ring-text">
+            <div class="exam-ring-score">{{ examScore }}</div>
+            <div class="exam-ring-total">/ {{ examTotal }}</div>
+          </div>
+        </div>
+        <div class="exam-info">
+          <div class="exam-title">Overall Performance</div>
+          <div class="exam-desc" *ngIf="aiSummary">{{ aiSummary.summary }}</div>
+          <div class="exam-desc" *ngIf="!aiSummary">Complete assessments to build your predicted score.</div>
+          <div class="exam-meta">
+            <div class="exam-meta-item"><i class="fas fa-book"></i><span>{{ user.studyStreak }} day streak</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subject Performance -->
+      <div class="section-row anim">
+        <div class="section-title">Subject Performance</div>
+        <a class="section-link" [routerLink]="['../', 'reports']">Details</a>
+      </div>
+      <div class="subjects-grid anim" #subsGrid>
+        <div class="subject-card" *ngFor="let sub of subjects">
+          <div class="ring-wrap">
+            <svg viewBox="0 0 64 64">
+              <circle class="ring-bg" cx="32" cy="32" r="26" [attr.stroke]="sub.bgColor"/>
+              <circle class="ring-fill rf" cx="32" cy="32" r="26"
+                [attr.stroke]="sub.color"
+                stroke-dasharray="163.36"
+                [attr.stroke-dashoffset]="sub.offset"/>
+            </svg>
+            <div class="ring-text" [style.color]="sub.color">{{ sub.percent }}%</div>
+          </div>
+          <div class="subject-name">{{ sub.name }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Chapters — full width ═══ -->
+  <div class="chapters-grid anim" *ngIf="weakChapters.length > 0 || strongChapters.length > 0">
+    <div class="chapter-card" *ngIf="weakChapters.length > 0">
+      <div class="chapter-head">
+        <span class="chapter-label chapter-label-weak">Weak Chapters</span>
+        <div class="chapter-icon chapter-icon-weak"><i class="fas fa-arrow-trend-down"></i></div>
+      </div>
+      <div class="chapter-row" *ngFor="let ch of weakChapters">
+        <span class="chapter-name">{{ ch.name }}</span>
+        <span class="chapter-pct chapter-pct-low" *ngIf="ch.percent > 0">{{ ch.percent }}%</span>
+      </div>
+    </div>
+    <div class="chapter-card" *ngIf="strongChapters.length > 0">
+      <div class="chapter-head">
+        <span class="chapter-label chapter-label-strong">Strong Chapters</span>
+        <div class="chapter-icon chapter-icon-strong"><i class="fas fa-arrow-trend-up"></i></div>
+      </div>
+      <div class="chapter-row" *ngFor="let ch of strongChapters">
+        <span class="chapter-name">{{ ch.name }}</span>
+        <span class="chapter-pct chapter-pct-high" *ngIf="ch.percent > 0">{{ ch.percent }}%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Brand ═══ -->
+  <div class="brand anim">
+    <div class="brand-name">PrepExam</div>
+    <div class="brand-sub">Your AI Learning Coach</div>
+  </div>
+
+</div>

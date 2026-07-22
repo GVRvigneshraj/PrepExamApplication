@@ -1,0 +1,43 @@
+@use 'variables' as *;
+
+* {
+  font-family: $font-family;
+}
+
+body {
+  font-size: $font-size-base;
+  color: $gray-800;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: $gray-900;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: $font-size-3xl; }
+h2 { font-size: $font-size-2xl; }
+h3 { font-size: $font-size-xl; }
+h4 { font-size: $font-size-lg; }
+h5 { font-size: $font-size-base; }
+h6 { font-size: $font-size-sm; }
+
+p { margin: 0 0 0.5rem; }
+
+a {
+  color: $primary;
+  text-decoration: none;
+  &:hover { text-decoration: underline; }
+}
+
+code {
+  background: $gray-100;
+  padding: 0.125rem 0.375rem;
+  border-radius: $border-radius-sm;
+  font-size: 0.875em;
+}
+
+small { font-size: $font-size-sm; }

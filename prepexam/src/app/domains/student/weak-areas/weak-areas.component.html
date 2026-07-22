@@ -1,0 +1,39 @@
+<div class="weak-areas-container">
+  <div class="page-header">
+    <div>
+      <h1>Weak Areas</h1>
+      <p>Topics that need more attention</p>
+    </div>
+  </div>
+
+  <div class="alert-banner">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>You have <strong>{{ weakAreas().length }} weak areas</strong> that need improvement. Focus on these to boost your score.</span>
+  </div>
+
+  <div class="weak-list">
+    <div class="weak-card" *ngFor="let area of weakAreas()">
+      <div class="weak-header">
+        <span class="subject-tag" [style.background]="getSubjectColor(area.subject)">
+          {{ area.subject }}
+        </span>
+        <span class="priority-badge" [ngClass]="getPriority(area.accuracy)">
+          {{ getPriority(area.accuracy) | titlecase }}
+        </span>
+      </div>
+      <h4>{{ area.topic }}</h4>
+      <p class="chapter-name">{{ area.chapter }}</p>
+      <div class="accuracy-bar">
+        <div class="bar-fill" [style.width.%]="area.accuracy" [style.background]="getAccuracyColor(area.accuracy)"></div>
+      </div>
+      <div class="accuracy-info">
+        <span>{{ area.accuracy }}% accuracy</span>
+        <span>{{ area.totalAttempted }} attempted</span>
+      </div>
+      <div class="recommendation">
+        <i class="fas fa-lightbulb"></i>
+        <span>{{ area.recommendedAction }}</span>
+      </div>
+    </div>
+  </div>
+</div>

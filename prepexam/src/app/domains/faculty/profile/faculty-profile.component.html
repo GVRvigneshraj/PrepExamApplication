@@ -1,0 +1,71 @@
+<div class="profile-container">
+  <div class="page-header">
+    <h1>Faculty Profile</h1>
+    <button class="btn-outline" (click)="toggleEdit()">
+      <i [class]="isEditing() ? 'fas fa-times' : 'fas fa-edit'"></i>
+      {{ isEditing() ? 'Cancel' : 'Edit Profile' }}
+    </button>
+  </div>
+
+  <div class="profile-grid">
+    <div class="profile-card main-info">
+      <div class="avatar-section">
+        <div class="avatar">FM</div>
+        <div>
+          <h2>{{ profile().fullName }}</h2>
+          <span class="role-badge">Faculty</span>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Email</label>
+          <input *ngIf="isEditing()" type="email" [ngModel]="profile().email" />
+          <span *ngIf="!isEditing()">{{ profile().email }}</span>
+        </div>
+        <div class="info-item">
+          <label>Phone</label>
+          <input *ngIf="isEditing()" type="tel" [ngModel]="profile().phone" />
+          <span *ngIf="!isEditing()">{{ profile().phone }}</span>
+        </div>
+        <div class="info-item">
+          <label>Department</label>
+          <span>{{ profile().department }}</span>
+        </div>
+        <div class="info-item">
+          <label>Joined</label>
+          <span>{{ profile().joinDate }}</span>
+        </div>
+      </div>
+
+      <div class="specializations">
+        <label>Specializations</label>
+        <div class="tags">
+          <span class="tag" *ngFor="let s of profile().specialization">{{ s }}</span>
+        </div>
+      </div>
+
+      <button *ngIf="isEditing()" class="btn-primary" (click)="saveProfile()">Save Changes</button>
+    </div>
+
+    <div class="stats-sidebar">
+      <h3>Teaching Stats</h3>
+      <div class="stat-item">
+        <i class="fas fa-question-circle" style="color: #4f46e5"></i>
+        <div><span class="stat-value">{{ stats().questionsCreated }}</span><span class="stat-label">Questions Created</span></div>
+      </div>
+      <div class="stat-item">
+        <i class="fas fa-file-alt" style="color: #0891b2"></i>
+        <div><span class="stat-value">{{ stats().mocksCreated }}</span><span class="stat-label">Mocks Created</span></div>
+      </div>
+      <div class="stat-item">
+        <i class="fas fa-users" style="color: #16a34a"></i>
+        <div><span class="stat-value">{{ stats().studentsReached | number }}</span><span class="stat-label">Students Reached</span></div>
+      </div>
+      <div class="stat-item">
+        <i class="fas fa-chart-line" style="color: #f59e0b"></i>
+        <div><span class="stat-value">{{ stats().averageStudentScore }}%</span><span class="stat-label">Avg Student Score</span></div>
+      </div>
+    </div>
+  </div>
+</div>

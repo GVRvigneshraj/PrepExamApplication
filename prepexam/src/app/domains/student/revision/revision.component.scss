@@ -1,0 +1,65 @@
+.revision-container { max-width: 900px; margin: 0 auto; }
+
+.page-header {
+  margin-bottom: 1.5rem;
+  h1 { margin: 0; font-size: 1.75rem; font-weight: 800; color: #0f172a; }
+  p { margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.95rem; }
+}
+
+.tab-bar {
+  display: flex; gap: 0.5rem; margin-bottom: 1.5rem;
+
+  .tab-btn {
+    padding: 0.65rem 1.25rem; border: 1px solid #e2e8f0; border-radius: 10px;
+    background: #ffffff; font-size: 0.88rem; font-weight: 600; color: #475569;
+    cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 0.5rem;
+
+    &:hover { border-color: #c7d2fe; }
+    &.active { background: #4f46e5; color: #ffffff; border-color: #4f46e5; }
+  }
+}
+
+.revision-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.revision-card {
+  display: flex; align-items: center; gap: 1rem; padding: 1.25rem;
+  background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px;
+  transition: all 0.15s;
+
+  &:hover { border-color: #c7d2fe; transform: translateY(-1px); }
+}
+
+.revision-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: grid; place-items: center; font-size: 1.2rem; flex-shrink: 0;
+}
+
+.revision-info { flex: 1; min-width: 0;
+
+  h4 { margin: 0; font-size: 0.95rem; font-weight: 700; color: #1e293b; }
+  p { margin: 0.2rem 0 0 0; font-size: 0.82rem; color: #94a3b8; }
+}
+
+.revision-meta {
+  display: flex; gap: 1rem; margin-top: 0.5rem;
+
+  .next-review { font-size: 0.78rem; color: #64748b; font-weight: 500; display: flex; align-items: center; gap: 0.3rem;
+    &.urgent { color: #ef4444; font-weight: 600; }
+  }
+  .interval, .date, .revisions { font-size: 0.78rem; color: #94a3b8; display: flex; align-items: center; gap: 0.3rem; }
+}
+
+.mastery-circle {
+  position: relative; width: 56px; height: 56px; flex-shrink: 0;
+
+  svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .mastery-text {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    font-size: 0.72rem; font-weight: 700; color: #1e293b;
+  }
+}
+
+@media (max-width: 768px) {
+  .revision-card { flex-wrap: wrap; }
+  .mastery-circle { margin-left: auto; }
+}

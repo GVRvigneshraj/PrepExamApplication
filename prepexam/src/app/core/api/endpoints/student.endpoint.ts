@@ -1,0 +1,43 @@
+import { environment } from '../../../../environments/environment';
+
+const BASE = environment.apiBaseUrl;
+
+export const StudentEndpoints = {
+  GET_ALL_EXAMS: `${BASE}/student/initial/getAllExamList`,
+  UPDATE_INITIAL_SETUP: `${BASE}/student/initial/updateInitialSetup`,
+  START_TEST: `${BASE}/v1/assessment/start`,
+  SUBMIT_TEST: `${BASE}/v1/assessment/submit`,
+  SAVE_ANSWER: `${BASE}/v1/assessment/answer`,
+  GET_INITIAL_TEST_QUESTIONS: `${BASE}/student/initial-test/questions`,
+  GET_ASSESSMENT: `${BASE}/v1/student/assessment`,
+  GET_ASSESSMENT_BY_ID: `${BASE}/v1/student/assessment`,
+  SUBMIT_ASSESSMENT: `${BASE}/v1/student/assessment/submit`,
+  GET_DASHBOARD: `${BASE}/v1/student/dashboard`,
+  START_TASK: `${BASE}/v1/tasks`,
+  COMPLETE_TASK: `${BASE}/v1/tasks`,
+  SKIP_TASK: `${BASE}/v1/tasks`,
+  GET_REPORTS: `${BASE}/student/reports`,
+  GET_LEADERBOARD: `${BASE}/v1/student/leaderboard`,
+  GET_BOOKMARKS: `${BASE}/student/bookmarks`,
+  ADD_BOOKMARK: `${BASE}/student/bookmarks`,
+  REMOVE_BOOKMARK: `${BASE}/student/bookmarks`,
+  GET_PRACTICE: `${BASE}/student/practice`,
+  GET_MOCK_TESTS: `${BASE}/v1/mock-series/list`,
+  GET_MOCK_SERIES_DETAIL: `${BASE}/v1/mock-series`,
+  START_MOCK: `${BASE}/v1/mock-series/start`,
+  SUBMIT_MOCK: `${BASE}/v1/mock-series/submit`,
+  GET_PYQ_LIST: `${BASE}/v1/pyq/list`,
+  GET_PYQ_DETAIL: `${BASE}/v1/pyq`,
+  GET_PROFILE: `${BASE}/student/profile`,
+  UPDATE_PROFILE: `${BASE}/student/profile`,
+  GET_NOTIFICATIONS: `${BASE}/student/notifications`,
+  MARK_NOTIFICATION_READ: `${BASE}/student/notifications/read`,
+  GET_AI_REVIEW: `${BASE}/v1/assessment/review`,
+  // History
+  GET_HISTORY_ASSESSMENT: `${BASE}/history/accessment`,
+  GET_HISTORY_MCQ: `${BASE}/history/mcq`,
+  GET_HISTORY_MOCK_SERIES: `${BASE}/history/mock-series`,
+  GET_HISTORY_MOCK: `${BASE}/history/mock`,
+  GET_HISTORY_PYQ: `${BASE}/history/pyq`,
+  GET_HISTORY_DETAIL: `${BASE}/history/detail`,
+} as const;

@@ -1,0 +1,190 @@
+<div class="dashboard-layout" [class.sidebar-collapsed]="isSidebarCollapsed">
+  <div class="backdrop" *ngIf="isMobileMenuOpen || isProfilePanelOpen || isNotificationsPanelOpen" (click)="closeAllPanels()"></div>
+
+  <aside class="sidebar" [class.mobile-open]="isMobileMenuOpen" [class.collapsed]="isSidebarCollapsed">
+    <app-sidebar
+      [collapsed]="isSidebarCollapsed"
+      [mobileOpen]="isMobileMenuOpen"
+      (sidebarCollapseChange)="isSidebarCollapsed = $event"
+    ></app-sidebar>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="header">
+      <app-header
+        [isSidebarCollapsed]="isSidebarCollapsed"
+        [isProfileOpen]="isProfilePanelOpen"
+        [isNotificationsOpen]="isNotificationsPanelOpen"
+        (toggleSidebar)="toggleSidebar()"
+        (toggleNotifications)="toggleNotifications()"
+        (toggleProfile)="toggleProfile()"
+      ></app-header>
+    </header>
+
+    <main class="page-content">
+      <router-outlet></router-outlet>
+    </main>
+
+    <!-- AI Co-Pilot Widget -->
+    <div class="ai-motivation-bot"
+         *ngIf="isAiBotEnabled"
+         [class.bubble-open]="isBubbleOpen"
+         [class.fullscreen-doubt]="copilotMode === 'doubt' && isBubbleOpen">
+
+      <div class="bot-speech-bubble" *ngIf="isBubbleOpen">
+        <div class="mode-container" *ngIf="copilotMode === 'motivate'">
+          <div class="bubble-header">
+            <span><i class="fas fa-sparkles"></i> AI Co-Pilot</span>
+            <button type="button" class="close-bubble-btn" (click)="closeBubble($event)">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+
+          <p class="bot-message">
+            {{ displayedMessage }}<span class="typing-cursor" *ngIf="isTyping">|</span>
+          </p>
+
+          <div class="motivation-actions-row">
+            <button type="button" class="switch-to-doubt-shortcut" (click)="switchCopilotMode('doubt')">
+              Ask a Doubt <i class="fas fa-comment-alt-question"></i>
+            </button>
+            <button type="button" class="action-mode-btn" (click)="generateNewQuote($event)" [disabled]="isTyping">
+              Next Advice <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="subcomponent-wrapper" *ngIf="copilotMode === 'doubt'">
+          <div class="doubt-placeholder">
+            <p>AI Tutor chat will open here. Connect to backend API for real responses.</p>
+            <button type="button" class="action-mode-btn" (click)="goBackToMotivation()">
+              <i class="fas fa-arrow-left"></i> Back to Motivation
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button class="bot-avatar-trigger" type="button" (click)="toggleBubble()" *ngIf="!(copilotMode === 'doubt' && isBubbleOpen)">
+        <div class="pulse-ring"></div>
+        <i class="fas fa-robot"></i>
+
+        <span class="dismiss-bot-badge" title="Disable Assistant" (click)="dismissBotTrigger($event)">
+          <i class="fas fa-times"></i>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Profile Panel -->
+  <div class="slide-panel profile-panel-wrapper" [class.open]="isProfilePanelOpen">
+    <div class="panel-header">
+      <h3>Profile & Settings</h3>
+      <button type="button" class="close-panel-btn" (click)="closeAllPanels()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="panel-scroll-container">
+      <div class="custom-card-form">
+        <h5 class="section-form-title"><i class="fas fa-id-card"></i> Personal Info</h5>
+
+        <div class="input-field-stack">
+          <label class="form-input-tag">Email Address</label>
+          <div class="input-with-icon-wrapper">
+            <i class="fas fa-envelope icon-prefix"></i>
+            <input type="email" class="custom-theme-control" [(ngModel)]="userProfile.email" placeholder="name@example.com" />
+          </div>
+        </div>
+
+        <div class="input-field-stack">
+          <label class="form-input-tag">Phone Number</label>
+          <div class="input-with-icon-wrapper">
+            <i class="fas fa-phone icon-prefix"></i>
+            <input type="text" class="custom-theme-control" [(ngModel)]="userProfile.phone" placeholder="+1 (000) 000-0000" />
+          </div>
+        </div>
+      </div>
+
+      <div class="custom-card-form">
+        <h5 class="section-form-title"><i class="fas fa-sliders-h"></i> System Controls</h5>
+
+        <div class="feature-toggle-item">
+          <div class="feature-item-meta">
+            <div class="icon-avatar-badge bg-p"><i class="fas fa-robot"></i></div>
+            <div class="label-info-block">
+              <p class="feature-headline">AI Co-Pilot Assistant</p>
+              <p class="feature-subtext">Toggle bottom AI assistant widget</p>
+            </div>
+          </div>
+          <label class="toggle-switch-ui">
+            <input type="checkbox" [(ngModel)]="isAiBotEnabled" (change)="onAiBotToggleChange()" />
+            <span class="sliding-groove-track"></span>
+          </label>
+        </div>
+
+        <div class="feature-toggle-item">
+          <div class="feature-item-meta">
+            <div class="icon-avatar-badge bg-b"><i class="fas fa-bell"></i></div>
+            <div class="label-info-block">
+              <p class="feature-headline">Push Notifications</p>
+              <p class="feature-subtext">Enable notification alerts</p>
+            </div>
+          </div>
+          <label class="toggle-switch-ui">
+            <input type="checkbox" [(ngModel)]="isNotificationAlerts" />
+            <span class="sliding-groove-track"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-fixed-footer">
+      <button type="button" class="panel-logout-btn" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Secure Log Out
+      </button>
+    </div>
+  </div>
+
+  <!-- Notifications Panel -->
+  <div class="slide-panel notification-panel-wrapper" [class.open]="isNotificationsPanelOpen">
+    <div class="panel-header">
+      <h3>Notifications</h3>
+      <button type="button" class="close-panel-btn" (click)="closeAllPanels()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="panel-scroll-container">
+      <ng-container *ngIf="notificationsFeed.length > 0; else noNotificationsTemplate">
+        <div class="notification-interactive-card" *ngFor="let alertItem of notificationsFeed">
+          <div class="card-alert-prefix-container">
+            <div class="icon-badge-avatar" [ngClass]="'badge-' + alertItem.bg">
+              <i [class]="alertItem.icon"></i>
+            </div>
+          </div>
+          <div class="card-alert-body-content">
+            <div class="body-headline-row">
+              <h6>{{ alertItem.title }}</h6>
+              <button class="dismiss-alert-cross" type="button" (click)="removeNotification(alertItem.id, $event)">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <p class="body-text-summary">{{ alertItem.text }}</p>
+            <span class="body-timestamp-indicator"><i class="far fa-clock"></i> {{ alertItem.time }}</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #noNotificationsTemplate>
+        <div class="empty-notifications">
+          <i class="fas fa-bell-slash"></i>
+          <h5>All caught up!</h5>
+          <p>No new notifications right now.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation -->
+  <app-mobile-menu></app-mobile-menu>
+</div>

@@ -1,0 +1,43 @@
+@use 'styles/variables';
+@use 'styles/mixins';
+@use 'styles/typography';
+@use 'styles/animations';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background: variables.$bg-primary;
+  font-family: variables.$font-family;
+  color: variables.$gray-800;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+img { max-width: 100%; height: auto; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: variables.$gray-300; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: variables.$gray-400; }
+
+// Global utility layout class for onboarding screens (Login, Register, OTP)
+.global-auth-viewport {
+  background-color: #eff3f9;
+  background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+}

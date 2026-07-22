@@ -1,0 +1,49 @@
+<div class="bookmarks-container">
+  <div class="page-header">
+    <div>
+      <h1>Bookmarks</h1>
+      <p>Saved questions for quick revision</p>
+    </div>
+    <span class="count-badge">{{ filteredBookmarks.length }} saved</span>
+  </div>
+
+  <div class="filter-bar">
+    <button
+      *ngFor="let filter of filters"
+      type="button"
+      class="filter-btn"
+      [class.active]="activeFilter() === filter"
+      (click)="setFilter(filter)">
+      {{ filter }}
+    </button>
+  </div>
+
+  <div class="bookmarks-list">
+    <div class="bookmark-card" *ngFor="let bookmark of filteredBookmarks">
+      <div class="bookmark-header">
+        <span class="subject-tag" [style.background]="getSubjectColor(bookmark.subject)">
+          {{ bookmark.subject }}
+        </span>
+        <span class="difficulty-tag" [style.color]="getDifficultyColor(bookmark.difficulty)">
+          {{ bookmark.difficulty }}
+        </span>
+      </div>
+      <p class="chapter">{{ bookmark.chapter }}</p>
+      <p class="question">{{ bookmark.question }}</p>
+      <div class="bookmark-footer">
+        <span class="date">
+          <i class="far fa-calendar"></i> {{ bookmark.bookmarkedAt }}
+        </span>
+        <button type="button" class="remove-btn" (click)="removeBookmark(bookmark.id)">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredBookmarks.length === 0">
+      <i class="fas fa-bookmark"></i>
+      <h3>No bookmarks yet</h3>
+      <p>Save questions while practicing to review them later</p>
+    </div>
+  </div>
+</div>

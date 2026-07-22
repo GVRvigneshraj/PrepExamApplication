@@ -1,0 +1,108 @@
+<div class="onboarding-container">
+
+  @if (showToast) {
+    <div class="bootstrap-toast-alert fade-in">
+      <div class="toast-body-content">
+        <div class="success-icon-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <div class="toast-text-wrapper">
+          <span class="toast-title">Success</span>
+          <span class="toast-desc">Login successful! Redirecting shortly...</span>
+        </div>
+      </div>
+      <button type="button" class="toast-dismiss-btn" (click)="showToast = false">&times;</button>
+    </div>
+  }
+
+  <div class="card-wrapper fade-in">
+    <div class="header-section text-center">
+      <div class="brand-logo-container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="brand-cap-icon">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+          <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+        </svg>
+        <span class="brand-name-text">PrepExam</span>
+      </div>
+      <p class="sub-heading-caption">Your AI-powered exam preparation companion</p>
+    </div>
+
+    <div class="login-surface-card">
+      <h1 class="portal-main-title">Welcome Back</h1>
+      <p class="portal-sub-title">Sign in to continue your preparation</p>
+
+      @if (loginErrorMessage) {
+        <div class="global-error-banner fade-in">
+          {{ loginErrorMessage }}
+        </div>
+      }
+
+      <form [formGroup]="loginForm" (ngSubmit)="$event.preventDefault(); handleAction()">
+
+        <div class="form-input-group">
+          <label class="field-label-text">EMAIL OR MOBILE</label>
+          <input
+            type="text"
+            formControlName="emailOrMobile"
+            placeholder="Enter your email or mobile number"
+            class="standard-text-input"
+            [class.input-error]="emailOrMobileControl?.invalid && (emailOrMobileControl?.touched || emailOrMobileControl?.dirty)"
+          />
+          @if (emailOrMobileControl?.invalid && (emailOrMobileControl?.touched || emailOrMobileControl?.dirty)) {
+            <div class="field-error-msg">
+              @if (emailOrMobileControl?.hasError('required')) { <span>Email or mobile is required.</span> }
+              @if (emailOrMobileControl?.hasError('minlength')) { <span>Must be at least 4 characters.</span> }
+              @if (emailOrMobileControl?.hasError('invalidCredentials')) { <span>Incorrect email or mobile.</span> }
+            </div>
+          }
+        </div>
+
+        <div class="form-input-group">
+          <label class="field-label-text">PASSWORD</label>
+          <div class="password-input-container">
+            <input
+              [type]="hidePassword ? 'password' : 'text'"
+              formControlName="password"
+              placeholder="Enter your password"
+              class="standard-text-input secondary-padding"
+              [class.input-error]="passwordControl?.invalid && (passwordControl?.touched || passwordControl?.dirty)"
+            />
+            <button type="button" class="visibility-toggle-btn" (click)="hidePassword = !hidePassword">
+              <span class="view-text-icon">{{ hidePassword ? '👁️' : '🙈' }}</span>
+            </button>
+          </div>
+          @if (passwordControl?.invalid && (passwordControl?.touched || passwordControl?.dirty)) {
+            <div class="field-error-msg">
+              @if (passwordControl?.hasError('required')) { <span>Password is required.</span> }
+              @if (passwordControl?.hasError('minlength')) { <span>Password must be at least 4 characters.</span> }
+              @if (passwordControl?.hasError('invalidCredentials')) { <span>Incorrect password.</span> }
+            </div>
+          }
+        </div>
+
+        <div class="action-footer-wrapper">
+          <button
+            type="submit"
+            class="btn btn-modern-primary full-width"
+            [disabled]="loginForm.invalid || isSubmitting"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-icon-left">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 14 14"/>
+            </svg>
+            <span>{{ isSubmitting ? 'Verifying...' : 'Verify & Login' }}</span>
+          </button>
+        </div>
+
+      </form>
+
+      <div class="alternate-action-footer">
+        <span class="alt-label">New here?</span>
+        <a routerLink="/register" class="alt-link-anchor">Create Account</a>
+      </div>
+
+    </div>
+  </div>
+</div>

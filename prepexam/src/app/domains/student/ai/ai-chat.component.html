@@ -1,0 +1,47 @@
+<div class="ai-chat-fullscreen">
+      <div class="chat-header">
+        <div class="header-left">
+          <button type="button" class="back-btn" (click)="onBack()">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <div class="profile-meta">
+            <div class="bot-avatar-circle">
+              <i class="fas fa-robot"></i>
+            </div>
+            <div class="meta-details">
+              <h5>AI Doubt Assistant</h5>
+              <span class="status-indicator">Online • Active Sync</span>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="close-panel-btn" (click)="onClose()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="chat-messages-container" id="subChatScroller">
+        <div *ngFor="let msg of chatHistory" class="message-row" [ngClass]="msg.sender">
+          <div class="avatar-icon">
+            <i class="fas" [ngClass]="msg.sender === 'bot' ? 'fa-robot' : 'fa-user'"></i>
+          </div>
+          <div class="bubble-text">
+            <p>{{ msg.text }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input-footer">
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            placeholder="Type your concept doubt here..." 
+            [(ngModel)]="userQuery"
+            (keyup.enter)="sendMessage()"
+            [disabled]="isTyping"
+          />
+          <button type="button" class="send-btn" (click)="sendMessage()" [disabled]="isTyping || !userQuery.trim()">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>

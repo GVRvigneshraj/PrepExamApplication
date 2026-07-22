@@ -1,0 +1,142 @@
+<div class="container-root" *ngIf="!isExamActive && !isDirectMode">
+
+  <h1 class="main-heading">Select Subject</h1>
+  <p class="sub-heading">Choose a subject to start assessment</p>
+
+  <div class="subject-grid">
+    <div
+      class="subject-card"
+      *ngFor="let sub of subjects"
+      [class.active-card]="selectedSubject === sub.name"
+      (click)="selectSubject(sub.name)">
+
+      <div class="check-indicator" *ngIf="selectedSubject === sub.name">
+        <i class="fas fa-check"></i>
+      </div>
+
+      <div class="icon-wrapper" [style.color]="sub.color" [style.background]="sub.color + '12'">
+        <i [class]="sub.icon"></i>
+      </div>
+      <div class="subject-label">{{ sub.name }}</div>
+    </div>
+  </div>
+
+  <div class="chapters-section">
+    <div class="section-meta">
+      <h2 class="active-subject-title">{{ selectedSubject }}</h2>
+      <div class="chapters-count">Total Chapters: {{ currentChapters.length }}</div>
+    </div>
+
+    <div class="chapter-stack">
+      <div
+        class="chapter-row-card"
+        *ngFor="let ch of currentChapters"
+        [class.is-expanded]="ch.isExpanded"
+        [class.is-locked]="!ch.unlocked">
+
+        <div class="card-header" (click)="toggleChapter(ch)">
+          <div class="header-left">
+            <span class="chapter-badge-num" [class.locked-num]="!ch.unlocked">
+              <i class="fas fa-lock" *ngIf="!ch.unlocked"></i>
+              <span *ngIf="ch.unlocked">{{ ch.id }}</span>
+            </span>
+            <span class="chapter-title-text">{{ ch.name }}</span>
+          </div>
+
+          <div class="header-right" *ngIf="ch.unlocked">
+            <span class="percentage-label" [style.color]="getProgressColor(ch.progress)">{{ ch.progress }}%</span>
+
+            <div class="radial-ring">
+              <svg viewBox="0 0 36 36" class="circular-svg">
+                <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path class="ring-fill"
+                      [style.stroke]="getProgressColor(ch.progress)"
+                      [attr.stroke-dasharray]="ch.progress + ', 100'"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              </svg>
+            </div>
+            <i class="fas fa-chevron-down arrow-toggle"></i>
+          </div>
+        </div>
+
+        <div class="card-body-expansion" *ngIf="ch.isExpanded && ch.unlocked">
+          <div class="sub-item-row">
+            <div class="item-left">
+              <div class="sub-icon blue-theme"><i class="fas fa-book-open"></i></div>
+              <div class="meta-block">
+                <div class="meta-title">Topics</div>
+                <div class="meta-desc">{{ ch.topicsCount }} Core Topics Covered</div>
+              </div>
+            </div>
+            <button class="action-btn outlines" (click)="startLesson(ch, $event)">Start Lesson <i class="fas fa-play-circle"></i></button>
+          </div>
+
+          <div class="sub-item-row no-border">
+            <div class="item-left">
+              <div class="sub-icon green-theme"><i class="fas fa-clipboard-list"></i></div>
+              <div class="meta-block">
+                <div class="meta-title">MCQ Assessment</div>
+                <div class="meta-desc">{{ ch.questionsCount }} Questions Setup</div>
+              </div>
+            </div>
+            <button class="action-btn success-solid" (click)="launchExam(ch, $event)">
+              Start MCQ <span class="badge-count">{{ ch.questionsCount }}</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= AI ASSISTANT MODAL CONFIRMATION DIALOG ================= -->
+<div class="ai-popup-backdrop" *ngIf="isconformationpopup">
+  <div class="ai-bubble bubble-alpha"></div>
+  <div class="ai-bubble bubble-beta"></div>
+
+  <div class="ai-modal-card">
+    <div class="ai-avatar-center">
+      <div class="ai-glow-ring"></div>
+      <div class="ai-core-icon">
+        <i class="fas fa-robot"></i>
+      </div>
+      <span class="ai-brand-tag">Core AI</span>
+    </div>
+
+    <div class="ai-content-block">
+      <h3 class="ai-title">Do you want to start the test?</h3>
+      <p class="ai-motivation">
+        "You are ready to start the chapter test. All the best, stay calm and perform at your highest potential!"
+      </p>
+    </div>
+
+    <div class="ai-actions-row">
+      <button type="button" class="btn-ai-cancel" (click)="handleCancel()">
+        Cancel
+      </button>
+      <button type="button" class="btn-ai-confirm" (click)="handleConfirm()">
+        Confirm & Start <i class="fas fa-bolt"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Active Assessment Frame -->
+<app-test-page
+  *ngIf="isExamActive && activeExamChapter"
+  [chapterData]="activeExamChapter"
+  [backLabel]="isDirectMode ? 'Back to Dashboard' : 'Back to Assessment'"
+  (onComplete)="onExamFinished($event)"
+  (onCancel)="handleTestCancel()">
+</app-test-page>
+
+<!-- Lesson Player -->
+<app-lesson-player
+  *ngIf="showLessonPlayer"
+  [chapterName]="lessonChapterName"
+  [topicName]="lessonTopicName"
+  [topicId]="lessonTopicId"
+  (close)="onLessonClose()"
+  (startTest)="onLessonStartTest($event)">
+</app-lesson-player>

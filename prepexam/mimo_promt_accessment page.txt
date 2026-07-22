@@ -1,0 +1,950 @@
+<div class="container-root" *ngIf="!isExamActive">
+
+  <h1 class="main-heading">Select Subject</h1>
+  <p class="sub-heading">Choose a subject to start assessment</p>
+
+  <div class="subject-grid">
+    <div
+      class="subject-card"
+      *ngFor="let sub of subjects"
+      [class.active-card]="selectedSubject === sub.name"
+      (click)="selectSubject(sub.name)">
+
+      <div class="check-indicator" *ngIf="selectedSubject === sub.name">
+        <i class="fas fa-check"></i>
+      </div>
+
+      <div class="icon-wrapper" [style.color]="sub.color" [style.background]="sub.color + '12'">
+        <i [class]="sub.icon"></i>
+      </div>
+      <div class="subject-label">{{ sub.name }}</div>
+    </div>
+  </div>
+
+  <div class="chapters-section">
+    <div class="section-meta">
+      <h2 class="active-subject-title">{{ selectedSubject }}</h2>
+      <div class="chapters-count">Total Chapters: {{ currentChapters.length }}</div>
+    </div>
+
+    <div class="chapter-stack">
+      <div
+        class="chapter-row-card"
+        *ngFor="let ch of currentChapters"
+        [class.is-expanded]="ch.isExpanded"
+        [class.is-locked]="!ch.unlocked">
+
+        <div class="card-header" (click)="toggleChapter(ch)">
+          <div class="header-left">
+            <span class="chapter-badge-num" [class.locked-num]="!ch.unlocked">
+              <i class="fas fa-lock" *ngIf="!ch.unlocked"></i>
+              <span *ngIf="ch.unlocked">{{ ch.id }}</span>
+            </span>
+            <span class="chapter-title-text">{{ ch.name }}</span>
+          </div>
+
+          <div class="header-right" *ngIf="ch.unlocked">
+            <span class="percentage-label" [style.color]="getProgressColor(ch.progress)">{{ ch.progress }}%</span>
+
+            <div class="radial-ring">
+              <svg viewBox="0 0 36 36" class="circular-svg">
+                <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path class="ring-fill"
+                      [style.stroke]="getProgressColor(ch.progress)"
+                      [attr.stroke-dasharray]="ch.progress + ', 100'"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              </svg>
+            </div>
+            <i class="fas fa-chevron-down arrow-toggle"></i>
+          </div>
+        </div>
+
+        <div class="card-body-expansion" *ngIf="ch.isExpanded && ch.unlocked">
+          <div class="sub-item-row">
+            <div class="item-left">
+              <div class="sub-icon blue-theme"><i class="fas fa-book-open"></i></div>
+              <div class="meta-block">
+                <div class="meta-title">Topics</div>
+                <div class="meta-desc">{{ ch.topicsCount }} Core Topics Covered</div>
+              </div>
+            </div>
+            <button class="action-btn outlines">Start Lesson <i class="fas fa-play-circle"></i></button>
+          </div>
+
+          <div class="sub-item-row no-border">
+            <div class="item-left">
+              <div class="sub-icon green-theme"><i class="fas fa-clipboard-list"></i></div>
+              <div class="meta-block">
+                <div class="meta-title">MCQ Assessment</div>
+                <div class="meta-desc">{{ ch.questionsCount }} Questions Setup</div>
+              </div>
+            </div>
+            <button class="action-btn success-solid" (click)="launchExam(ch, $event)">
+              Start MCQ <span class="badge-count">{{ ch.questionsCount }}</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= AI ASSISTANT MODAL CONFIRMATION DIALOG ================= -->
+<div class="ai-popup-backdrop" *ngIf="isconformationpopup">
+  <!-- Glowing Animated Decorative Background Bubbles -->
+  <div class="ai-bubble bubble-alpha"></div>
+  <div class="ai-bubble bubble-beta"></div>
+
+  <div class="ai-modal-card">
+    <!-- Center Focused AI Branding Identifier Badge -->
+    <div class="ai-avatar-center">
+      <div class="ai-glow-ring"></div>
+      <div class="ai-core-icon">
+        <i class="fas fa-robot"></i>
+      </div>
+      <span class="ai-brand-tag">Core AI</span>
+    </div>
+
+    <!-- Confirmation & Motivational Statement Block -->
+    <div class="ai-content-block">
+      <h3 class="ai-title">Do you want to start the test?</h3>
+      <p class="ai-motivation">
+        "You are ready to start the chapter test. All the best, stay calm and perform at your highest potential!"
+      </p>
+    </div>
+
+    <!-- AI Core Action Trigger Row -->
+    <div class="ai-actions-row">
+      <button type="button" class="btn-ai-cancel" (click)="handleCancel()">
+        Cancel
+      </button>
+      <button type="button" class="btn-ai-confirm" (click)="handleConfirm()">
+        Confirm & Start <i class="fas fa-bolt"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Active Assessment Frame -->
+<app-test-page
+  *ngIf="isExamActive && activeExamChapter"
+  [chapterData]="activeExamChapter"
+  (onComplete)="onExamFinished($event)"
+  (onCancel)="handleTestCancel()">
+</app-test-page>
+
+
+css 
+
+.container-root {
+  width: 100%;
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #fafafa;
+}
+
+.main-heading {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.02em;
+}
+
+.sub-heading {
+  color: #64748b;
+  font-size: 14px;
+  margin: 0 0 20px 0;
+}
+
+/* Flex-Grid Responsive Category Row */
+.subject-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.subject-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+
+  &.active-card {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 1px #2563eb;
+  }
+}
+
+.check-indicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 14px;
+  height: 14px;
+  background: #2563eb;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+}
+
+.icon-wrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.subject-label {
+  font-weight: 700;
+  font-size: 13px;
+  color: #1e293b;
+}
+
+/* Modular Structural List Rows */
+.section-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 14px;
+
+  .active-subject-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+  }
+  .chapters-count {
+    font-size: 12px;
+    color: #64748b;
+  }
+}
+
+.chapter-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chapter-row-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+
+  &.is-locked {
+    background: #f8fafc;
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+.card-header {
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.chapter-badge-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &.locked-num {
+    background: #e2e8f0;
+    color: #94a3b8;
+  }
+}
+
+.chapter-title-text {
+  font-weight: 700;
+  font-size: 14px;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.percentage-label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.radial-ring {
+  width: 20px;
+  height: 20px;
+}
+
+.circular-svg {
+  transform: rotate(-90deg);
+}
+
+.ring-bg {
+  fill: none;
+  stroke: #f1f5f9;
+  stroke-width: 4;
+}
+
+.ring-fill {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.arrow-toggle {
+  font-size: 11px;
+  color: #94a3b8;
+  transition: transform 0.2s;
+}
+
+.is-expanded .arrow-toggle {
+  transform: rotate(180deg);
+}
+
+.card-body-expansion {
+  border-top: 1px solid #f1f5f9;
+  padding: 4px 16px 12px 16px;
+}
+
+.sub-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+
+  &.no-border { border-bottom: none; }
+}
+
+.item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sub-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+
+  &.blue-theme { background: #eff6ff; color: #2563eb; }
+  &.green-theme { background: #ecfdf5; color: #10b981; }
+}
+
+.meta-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.meta-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.meta-desc {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.action-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &.outlines {
+    background: #fff;
+    border: 1px solid #2563eb;
+    color: #2563eb;
+  }
+
+  &.success-solid {
+    background: #10b981;
+    color: white;
+  }
+}
+
+.badge-count {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 10px;
+}
+
+/* ================= PRESTIGE AI CONFIRMATION POPUP STYLING ================= */
+.ai-popup-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(8, 10, 18, 0.65); // Deeper technical backdrop overlay
+  backdrop-filter: blur(14px);         // Clean modern frosted glass blur
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 999999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+// Background technical glowing bubbles
+.ai-bubble {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.25;
+  z-index: 1;
+  pointer-events: none;
+  animation: pulseBubble 8s infinite alternate ease-in-out;
+
+  &.bubble-alpha {
+    width: 250px;
+    height: 250px;
+    background: #6d4cff;
+    top: 20%;
+    left: 25%;
+  }
+
+  &.bubble-beta {
+    width: 300px;
+    height: 300px;
+    background: #3b82f6;
+    bottom: 15%;
+    right: 20%;
+    animation-delay: -3s;
+  }
+}
+
+// Standalone Central AI Interface Box
+.ai-modal-card {
+  position: relative;
+  z-index: 5;
+  background: #ffffff;
+  border: 1px solid rgba(109, 76, 255, 0.15);
+  border-radius: 24px;
+  padding: 40px 32px 32px 32px;
+  width: 100%;
+  max-width: 440px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25),
+              0 0 0 1px rgba(109, 76, 255, 0.05);
+  animation: aiModalReveal 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  box-sizing: border-box;
+
+  * { box-sizing: border-box; }
+}
+
+// Center-docked AI Branding System
+.ai-avatar-center {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+
+  .ai-core-icon {
+    position: relative;
+    z-index: 3;
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #7c3aed, #6d4cff);
+    color: #ffffff;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 8px 20px rgba(109, 76, 255, 0.35);
+  }
+
+  .ai-glow-ring {
+    position: absolute;
+    top: -8px;
+    width: 80px;
+    height: 80px;
+    border-radius: 26px;
+    border: 2px dashed rgba(124, 58, 237, 0.3);
+    animation: rotateRing 14s linear infinite;
+  }
+
+  .ai-brand-tag {
+    margin-top: 12px;
+    background: #f3f0ff;
+    color: #6d4cff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(109, 76, 255, 0.1);
+  }
+}
+
+// Dialog Layout Typographies
+.ai-content-block {
+  margin-bottom: 32px;
+
+  .ai-title {
+    font-size: 19px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.01em;
+  }
+
+  .ai-motivation {
+    font-size: 13.5px;
+    color: #475569;
+    line-height: 1.6;
+    margin: 0;
+    font-style: italic;
+    background: #f8fafc;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border-left: 3px solid #6d4cff;
+  }
+}
+
+// Interactive Action Command Hub Row
+.ai-actions-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+
+  button {
+    flex: 1;
+    padding: 14px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-ai-cancel {
+    background: #ffffff;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+
+    &:hover {
+      background: #f8fafc;
+      color: #334155;
+      border-color: #cbd5e1;
+    }
+  }
+
+  .btn-ai-confirm {
+    background: linear-gradient(135deg, #7c3aed, #6d4cff);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 4px 14px rgba(109, 76, 255, 0.3);
+
+    &:hover {
+      transform: translateY(-1.5px);
+      box-shadow: 0 6px 20px rgba(109, 76, 255, 0.45);
+      filter: brightness(1.06);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Keyframes Animations */
+@keyframes aiModalReveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes rotateRing {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulseBubble {
+  from { transform: scale(1) translate(0, 0); }
+  to { transform: scale(1.15) translate(15px, -10px); }
+}
+
+/* Compact Responsive Adjustments */
+@media (max-width: 440px) {
+  .ai-modal-card {
+    padding: 32px 20px 24px 20px;
+  }
+  .ai-actions-row {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+}
+
+
+ts
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+import { TestPage } from '../../shared/test-page/test-page';
+import { AssessmentService } from '../../../../core/services/assessment-service';
+import { TestService } from '../../../../core/services/test-service';
+
+// ================= Interfaces =================
+export interface Topic {
+  id: number;
+  name: string;
+  questionCount: number;
+}
+
+export interface Chapter {
+  id: number;
+  name: string;
+  unlocked: boolean;
+  completed: boolean;
+  progress: number;
+  topicsCount: number;
+  questionsCount: number;
+  topics: Topic[];
+  isExpanded?: boolean;
+}
+
+export interface Unit {
+  id: number;
+  name: string;
+  code: string;
+  displayOrder: number;
+  totalChapters: number;
+  totalTopics: number;
+  totalQuestions: number;
+  progress: number;
+  unlocked: boolean;
+  completed: boolean;
+  chapters: Chapter[];
+}
+
+export interface Subject {
+  id: number;
+  name: string;
+  code: string;
+  icon: string;
+  color: string;
+  units: Unit[];
+}
+
+@Component({
+  selector: 'app-assessment',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TestPage
+  ],
+  templateUrl: './assessment.html',
+  styleUrl: './assessment.scss'
+})
+export class Assessment implements OnInit {
+
+  constructor(
+    private testService: TestService,
+    private assessmentService: AssessmentService,
+    private cdr: ChangeDetectorRef,
+  ) { }
+
+  // ================= Variables =================
+  subjects: Subject[] = [];
+  selectedSubject = '';
+  currentChapters: Chapter[] = [];
+  activeExamChapter: Chapter | null = null;
+  isExamActive = false;
+
+  // AI Modal Controller Variables
+  isconformationpopup = false;
+  pendingLaunchChapter: Chapter | null = null;
+
+  // ================= Init =================
+  ngOnInit(): void {
+    console.log("is working ");
+    this.loadAssessment();
+  }
+
+  // ================= API =================
+  loadAssessment(): void {
+    this.assessmentService.getAssessment().subscribe({
+      next: (res: any) => {
+        this.subjects = res.data || res;
+
+        if (this.subjects.length > 0) {
+          this.selectedSubject = this.subjects[0].name;
+          this.updateCurrentChapters();
+        }
+        console.log(this.subjects);
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        console.error(err);
+      }
+    });
+  }
+
+  // ================= Update Chapters Array Helper =================
+  updateCurrentChapters(): void {
+    const subject = this.subjects.find(s => s.name === this.selectedSubject);
+    this.currentChapters = subject ? subject.units.flatMap(unit => unit.chapters) : [];
+    this.cdr.detectChanges();
+  }
+
+  // ================= Subject Click =================
+  selectSubject(name: string): void {
+    if (this.isExamActive) {
+      return;
+    }
+    this.selectedSubject = name;
+    this.updateCurrentChapters();
+    this.cdr.detectChanges();
+  }
+
+  // ================= Expand Chapter =================
+  toggleChapter(chapter: Chapter): void {
+    if (this.isExamActive) {
+      return;
+    }
+    if (!chapter.unlocked) {
+      return;
+    }
+    chapter.isExpanded = !chapter.isExpanded;
+    this.cdr.detectChanges();
+  }
+
+  // ================= Launch Exam Interceptor =================
+  launchExam(chapter: Chapter, event: Event): void {
+    event.stopPropagation();
+    if (!chapter.unlocked || this.isExamActive) {
+      return;
+    }
+
+    // Capture chapter context and open confirmation UI
+    this.pendingLaunchChapter = chapter;
+    this.isconformationpopup = true;
+    this.cdr.detectChanges();
+  }
+
+  // ================= Modal Decision Logic Actions =================
+  // handleConfirm(): void {
+  //   if (!this.pendingLaunchChapter) {
+  //     this.handleCancel();
+  //     return;
+  //   }
+
+  //   const targetChapter = this.pendingLaunchChapter;
+  //   this.isconformationpopup = false;
+  //   this.pendingLaunchChapter = null;
+
+  //   // Execute backend sequence
+  //   const testId: any = 1;
+  //   this.testService.startTest(testId).subscribe({
+  //     next: (res: any) => {
+  //       if (res && res.success) {
+  //         this.activeExamChapter = res;
+  //         this.isExamActive = true;
+  //         this.cdr.detectChanges();
+  //       } else {
+  //         console.error('Failed to start the exam:', res);
+  //       }
+  //     },
+  //     error: (err: any) => {
+  //       console.error('Error occurred while starting the exam:', err);
+  //     }
+  //   });
+  // }
+
+
+  // ================= Modal Decision Logic Actions =================
+  handleConfirm(): void {
+    if (!this.pendingLaunchChapter) {
+      this.handleCancel();
+      return;
+    }
+
+    // 1. Capture the true dynamic context object from state
+    const targetChapter = this.pendingLaunchChapter;
+
+    // Extract dynamic keys depending on your API structure (e.g., targetChapter.id)
+    const chapterTestId = targetChapter.id;
+
+    // 2. Reset the modal UI states immediately
+    this.isconformationpopup = false;
+    this.pendingLaunchChapter = null;
+
+    // 3. Pass the dynamic chapter ID to your service call instead of a static number
+    console.log("chapterTestId =-> "+chapterTestId);
+      const body={
+        testType:"CHAPTER_ASSESSMENT",
+        referenceId:chapterTestId
+      }
+
+    this.testService.startTest(body).subscribe({
+      next: (res: any) => {
+        if (res && res.success) {
+          this.activeExamChapter = res;
+          this.isExamActive = true;
+          this.cdr.detectChanges();
+        } else {
+          console.error('Failed to start the exam matching dynamic chapter:', res);
+        }
+      },
+      error: (err: any) => {
+        console.error('Error occurred while launching dynamic test sequence:', err);
+      }
+    });
+  }
+  handleCancel(): void {
+    this.isconformationpopup = false;
+    this.pendingLaunchChapter = null;
+    this.cdr.detectChanges();
+  }
+
+  // ================= Finish Exam =================
+  onExamFinished(scorePercentage: number): void {
+    if (!this.activeExamChapter) {
+      return;
+    }
+
+    if (scorePercentage >= 80) {
+      this.subjects = this.subjects.map(subject => {
+        const containsChapter = subject.units.some(unit =>
+          unit.chapters.some(ch => ch.id === this.activeExamChapter!.id)
+        );
+
+        if (!containsChapter) return subject;
+
+        return {
+          ...subject,
+          units: subject.units.map(unit => {
+            const chaptersList = unit.chapters;
+            const currentIndex = chaptersList.findIndex(ch => ch.id === this.activeExamChapter!.id);
+
+            if (currentIndex === -1) return unit;
+
+            const updatedChapters = chaptersList.map((ch, index) => {
+              if (index === currentIndex) {
+                return { ...ch, completed: true, progress: 100, isExpanded: ch.isExpanded };
+              }
+              if (index === currentIndex + 1) {
+                return { ...ch, unlocked: true };
+              }
+              return ch;
+            });
+
+            return { ...unit, chapters: updatedChapters };
+          })
+        };
+      });
+
+      this.updateCurrentChapters();
+    }
+
+    this.activeExamChapter = null;
+    this.isExamActive = false;
+    this.loadAssessment();
+    this.cdr.detectChanges();
+  }
+
+  // parent component
+handleTestCancel(): void {
+  this.isExamActive = false;
+  // or, if using Router:
+  // this.router.navigate(['/assessment', this.chapterId]);
+}
+
+  // ================= Progress Color =================
+  getProgressColor(progress: number): string {
+    if (progress >= 100) {
+      return '#22c55e';
+    }
+    if (progress >= 40) {
+      return '#f59e0b';
+    }
+    return '#3b82f6';
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+

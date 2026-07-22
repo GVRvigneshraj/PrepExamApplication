@@ -1,0 +1,315 @@
+<div class="shell" *ngIf="!isTestActive">
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="topbar">
+    <div class="topbar-main">
+      <div class="brand-icon"><i class="fas fa-flask"></i></div>
+      <div class="brand-text">
+        <h1>Mock Test Portal</h1>
+        <p>{{ seriesMeta()?.examName || 'Exam' }} · {{ headerStats().total }} Series</p>
+      </div>
+    </div>
+    <div class="topbar-stats">
+      <div class="ts-item"><span class="ts-val">{{ headerStats().total }}</span><span class="ts-lbl">Total</span></div>
+      <div class="ts-div"></div>
+      <div class="ts-item"><span class="ts-val">{{ headerStats().unlocked }}</span><span class="ts-lbl">Unlocked</span></div>
+      <div class="ts-div"></div>
+      <div class="ts-item"><span class="ts-val">{{ headerStats().completed }}</span><span class="ts-lbl">Done</span></div>
+    </div>
+  </header>
+
+  <!-- ═══ TAB BAR ═══ -->
+  <div class="tab-bar">
+    <button class="tab-btn" [class.active]="activeTab() === 'series'" (click)="switchTab('series')">
+      <i class="fas fa-layer-group"></i> <span>Mock Series</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'mock'" (click)="switchTab('mock')">
+      <i class="fas fa-file-alt"></i> <span>Quick Mock</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'pyq'" (click)="switchTab('pyq')">
+      <i class="fas fa-history"></i> <span>PYQ</span>
+    </button>
+  </div>
+
+  <!-- ═══ MOCK SERIES ═══ -->
+  <div class="view" *ngIf="activeTab() === 'series'">
+
+    <!-- Loading -->
+    <div class="loading-state" *ngIf="isLoading()">
+      <div class="l-ring"></div>
+      <span>Loading series...</span>
+    </div>
+
+    <!-- Series List -->
+    <div class="series-list" *ngIf="!isLoading()">
+      <div class="series-card" *ngFor="let series of seriesList()"
+        [class.locked]="!series.unlocked"
+        [class.expanded]="isExpanded(series.seriesId)">
+
+        <!-- Header (always visible) -->
+        <div class="sc-header" (click)="toggleSeries(series.seriesId)">
+          <div class="sc-left">
+            <div class="sc-icon-wrap" [class.unlocked]="series.unlocked">
+              <i [class]="series.unlocked ? 'fas fa-flask' : 'fas fa-lock'"></i>
+            </div>
+            <div class="sc-info">
+              <div class="sc-title-row">
+                <h3>{{ series.seriesName }}</h3>
+                <span class="sc-code">{{ series.seriesCode }}</span>
+                <span class="sc-attempts-badge" *ngIf="series.attemptCount > 0">{{ series.attemptCount }}x</span>
+              </div>
+              <p class="sc-desc">{{ series.description }}</p>
+              <div class="sc-meta">
+                <span><i class="fas fa-list"></i> {{ series.totalQuestions }} Qs</span>
+                <span><i class="fas fa-clock"></i> {{ series.durationMinutes }}m</span>
+              </div>
+            </div>
+          </div>
+          <div class="sc-right">
+            <div class="sc-grade" *ngIf="series.attemptCount > 0"
+              [style.background]="getGradeColor(series.averageAccuracy) + '15'"
+              [style.color]="getGradeColor(series.averageAccuracy)">
+              {{ getGrade(series.averageAccuracy) }}
+            </div>
+            <i class="fas" [ngClass]="isExpanded(series.seriesId) ? 'fa-chevron-up' : 'fa-chevron-down'" class="sc-arrow"></i>
+          </div>
+        </div>
+
+        <!-- Expanded Content -->
+        <div class="sc-expand" *ngIf="isExpanded(series.seriesId)">
+          <div class="sc-expand-inner">
+
+            <!-- Score Rings Row -->
+            <div class="score-rings-row">
+              <div class="score-ring-item">
+                <div class="ring" [style.background]="getRingBg(series.averageAccuracy)">
+                  <svg viewBox="0 0 36 36">
+                    <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path class="ring-fill" [attr.stroke]="getRingColor(series.averageAccuracy)" [attr.stroke-dasharray]="series.averageAccuracy + ', 100'" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  </svg>
+                  <span class="ring-val">{{ series.averageAccuracy }}%</span>
+                </div>
+                <span class="ring-label">Average</span>
+              </div>
+              <div class="score-ring-item">
+                <div class="ring" [style.background]="getRingBg(series.highestAccuracy)">
+                  <svg viewBox="0 0 36 36">
+                    <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path class="ring-fill" [attr.stroke]="getRingColor(series.highestAccuracy)" [attr.stroke-dasharray]="series.highestAccuracy + ', 100'" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  </svg>
+                  <span class="ring-val">{{ series.highestAccuracy }}%</span>
+                </div>
+                <span class="ring-label">Best</span>
+              </div>
+              <div class="score-ring-item">
+                <div class="ring" [style.background]="getRingBg(series.latestAccuracy)">
+                  <svg viewBox="0 0 36 36">
+                    <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path class="ring-fill" [attr.stroke]="getRingColor(series.latestAccuracy)" [attr.stroke-dasharray]="series.latestAccuracy + ', 100'" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  </svg>
+                  <span class="ring-val">{{ series.latestAccuracy }}%</span>
+                </div>
+                <span class="ring-label">Last</span>
+              </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-row">
+              <div class="stat-item">
+                <span class="stat-val">{{ series.totalQuestions }}</span>
+                <span class="stat-lbl">Questions</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-val">{{ series.durationMinutes }}m</span>
+                <span class="stat-lbl">Duration</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-val">{{ series.attemptCount }}</span>
+                <span class="stat-lbl">Attempts</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-val" [ngClass]="scoreClass(series.highestAccuracy)">{{ series.highestAccuracy }}%</span>
+                <span class="stat-lbl">Best Score</span>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-section" *ngIf="series.attemptCount > 0">
+              <div class="progress-header">
+                <span>Accuracy Progress</span>
+                <span class="progress-pct" [style.color]="getScoreColor(series.averageAccuracy)">{{ series.averageAccuracy }}%</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" [style.width.%]="series.averageAccuracy" [style.background]="getScoreColor(series.averageAccuracy)"></div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="sc-actions">
+              <button class="btn-start" *ngIf="series.unlocked" (click)="startSeriesTest(series, $event)">
+                <i class="fas fa-play"></i>
+                {{ series.attemptCount > 0 ? 'Retake Test' : 'Start Test' }}
+              </button>
+              <button class="btn-locked" *ngIf="!series.unlocked">
+                <i class="fas fa-lock"></i> Locked
+              </button>
+              <button class="btn-history" *ngIf="series.attemptCount > 0" (click)="openMockSeriesHistory(series.seriesId, series.seriesName, $event)">
+                <i class="fas fa-history"></i> History
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Full MOCK ═══ -->
+  <div class="view" *ngIf="activeTab() === 'mock'">
+    <div class="quick-mock-card">
+      <div class="qm-icon"><i class="fas fa-bolt"></i></div>
+      <h3>Full Mock Test</h3>
+      <p>Generate a random 30-question mock test from any subject. Practice anytime, anywhere.</p>
+      <div class="qm-features">
+        <div class="qm-feat"><i class="fas fa-list"></i> 180 Questions</div>
+        <div class="qm-feat"><i class="fas fa-clock"></i> 180 Minutes</div>
+        <div class="qm-feat"><i class="fas fa-chart-line"></i> Instant Results</div>
+      </div>
+      <div class="qm-actions">
+        <button class="btn-start" (click)="startSingleMock()"><i class="fas fa-play"></i> Start Full Mock</button>
+        <button class="btn-history" (click)="openMockHistory('Full Mock', $event)"><i class="fas fa-history"></i> History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PYQ ═══ -->
+  <div class="view" *ngIf="activeTab() === 'pyq'">
+    <div class="pyq-list">
+      <div class="pyq-card" *ngFor="let year of [2025, 2024, 2023, 2022, 2021]" (click)="startPyq(year)">
+        <div class="pyq-year">{{ year }}</div>
+        <div class="pyq-info">
+          <h3>NEET {{ year }}</h3>
+          <p>Official Previous Year Paper</p>
+          <div class="pyq-meta">
+            <span><i class="fas fa-list"></i> 180 Qs</span>
+            <span><i class="fas fa-clock"></i> 180m</span>
+            <span><i class="fas fa-star"></i> 720 Marks</span>
+          </div>
+        </div>
+        <div class="pyq-actions">
+          <button class="btn-history small" (click)="openMockHistory('NEET ' + year, $event); $event.stopPropagation()">
+            <i class="fas fa-history"></i>
+          </button>
+          <div class="pyq-play"><i class="fas fa-play-circle"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ ACTIVE TEST ═══ -->
+<app-test-page
+  *ngIf="isTestActive && activeTestData"
+  [chapterData]="activeTestData"
+  [durationMinutes]="testDuration()"
+  [backLabel]="testBackLabel()"
+  (onComplete)="onTestComplete($event)"
+  (onCancel)="onTestCancel()">
+</app-test-page>
+
+<!-- ═══ HISTORY MODAL ═══ -->
+<div class="history-overlay" *ngIf="showHistory()" (click)="closeHistory()">
+  <div class="history-modal" (click)="$event.stopPropagation()">
+    <div class="hm-header">
+      <div>
+        <h3>{{ historyTitle() }}</h3>
+        <p>{{ historyList().length }} attempts</p>
+      </div>
+      <button class="hm-close" (click)="closeHistory()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="hm-body">
+      <div class="hm-loading" *ngIf="historyLoading()">
+        <div class="hm-ring"></div>
+        <span>Loading history...</span>
+      </div>
+      <div class="hm-empty" *ngIf="!historyLoading() && historyList().length === 0">
+        <i class="fas fa-inbox"></i>
+        <p>No attempts yet</p>
+        <span>Take this test to see your history here</span>
+      </div>
+
+      <!-- Attempt Cards -->
+      <div class="attempt-card" *ngFor="let a of historyList(); let i = index" (click)="selectedAttempt()?.assessmentId === a.assessmentId ? selectedAttempt.set(null) : selectedAttempt.set(a)">
+        <div class="ac-header">
+          <div class="ac-left">
+            <span class="ac-rank">#{{ a.attemptNumber }}</span>
+            <div class="ac-info">
+              <span class="ac-paper">{{ a.paperCode }}</span>
+              <span class="ac-date">{{ a.submittedAt | date:'MMM d, y, h:mm a' }}</span>
+            </div>
+          </div>
+          <div class="ac-right">
+            <div class="ac-grade" [style.background]="getGradeColor(a.accuracy) + '15'" [style.color]="getGradeColor(a.accuracy)">{{ a.grade }}</div>
+            <span class="ac-accuracy" [ngClass]="scoreClass(a.accuracy)">{{ a.accuracy }}%</span>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="ac-stats">
+          <div class="ac-stat"><span class="ac-stat-val" style="color:#22c55e">{{ a.correct }}</span><span class="ac-stat-lbl">Correct</span></div>
+          <div class="ac-stat"><span class="ac-stat-val" style="color:#ef4444">{{ a.wrong }}</span><span class="ac-stat-lbl">Wrong</span></div>
+          <div class="ac-stat"><span class="ac-stat-val" style="color:#94a3b8">{{ a.skipped }}</span><span class="ac-stat-lbl">Skipped</span></div>
+          <div class="ac-stat"><span class="ac-stat-val">{{ a.netScore }}</span><span class="ac-stat-lbl">Score</span></div>
+        </div>
+
+        <!-- Expanded Detail -->
+        <div class="ac-detail" *ngIf="selectedAttempt()?.assessmentId === a.assessmentId">
+          <!-- Subject Breakdown -->
+          <div class="ac-section">
+            <h4><i class="fas fa-chart-pie"></i> Subject Breakdown</h4>
+            <div class="subject-row" *ngFor="let sb of a.subjectBreakdown">
+              <div class="sb-info">
+                <span class="sb-name">{{ sb.subjectName }}</span>
+                <span class="sb-acc">{{ sb.accuracy }}%</span>
+              </div>
+              <div class="sb-bar">
+                <div class="sb-fill" [style.width.%]="sb.accuracy" [style.background]="getScoreColor(sb.accuracy)"></div>
+              </div>
+              <div class="sb-meta">
+                <span>{{ sb.correct }}/{{ sb.totalQuestions }} correct</span>
+                <span>{{ sb.timeTakenSeconds }}s</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Summary -->
+          <div class="ac-section" *ngIf="a.summary">
+            <h4><i class="fas fa-robot"></i> AI Analysis</h4>
+            <div class="ai-summary-box">
+              <p *ngFor="let line of parseSummary(a.summary)">{{ line }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hm-footer" *ngIf="!historyLoading()">
+      <button class="btn-start" (click)="closeHistory()"><i class="fas fa-check"></i> Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Loading -->
+<div class="loader-bg" [class.show]="isLoading()">
+  <div class="l-ring"></div>
+  <div class="l-txt">{{ loadingTitle() }}</div>
+  <div class="l-sub">{{ loadingSub() }}</div>
+</div>
+
+<!-- Toasts -->
+<div class="toast-wrap">
+  <div class="toast" [class.ok]="t.type === 'ok'" *ngFor="let t of toasts()">
+    <i class="fas" [ngClass]="t.type === 'ok' ? 'fa-check-circle' : 'fa-info-circle'"></i>
+    {{ t.msg }}
+  </div>
+</div>

@@ -1,0 +1,256 @@
+<div class="exam-container-wrapper" *ngIf="!showAiReportPanel">
+  <div class="exam-header">
+    <div class="header-left">
+      <span class="category-tag">{{ subtitleLabel }}</span>
+      <h2>{{ testTitle }}</h2>
+    </div>
+    <div class="header-right">
+      <span class="global-timer" *ngIf="durationMinutes" [class.time-warning]="globalTimerSeconds <= 300">
+        <i class="fas fa-clock"></i> {{ globalTimerDisplay }}
+      </span>
+      <span class="progress-indicator">
+        Question <strong>{{ currentIndex + 1 }}</strong> of {{ activeQuestions.length }}
+      </span>
+      <button type="button" class="quit-btn" (click)="triggerExitVerification()">
+        <i class="fas fa-times-circle"></i> Quit Test
+      </button>
+    </div>
+  </div>
+
+  <div class="exam-workspace-layout" *ngIf="currentQuestion">
+    <main class="question-canvas">
+      <div class="question-card">
+        <div class="meta-row">
+          <span class="q-number-badge">Question {{ currentIndex + 1 }}</span>
+          <button type="button" class="review-toggle-btn" [class.active-review]="currentQuestion.markedReviewState" (click)="toggleReviewMode()">
+            <i class="fas fa-bookmark"></i>
+            {{ currentQuestion.markedReviewState ? 'Marked for Review' : 'Mark For Review' }}
+          </button>
+        </div>
+
+        <p class="question-text" [innerHTML]="currentQuestion.questionText"></p>
+
+        <div class="question-media-wrapper" *ngIf="currentQuestion.imageUrl">
+          <img [src]="currentQuestion.imageUrl" alt="Question Chart Illustration" class="question-fluid-img" />
+        </div>
+
+        <div class="options-vertical-group">
+          <div
+            class="option-row"
+            *ngFor="let opt of currentQuestion.options; let idx = index"
+            [class.is-selected]="currentQuestion.userSelectedIndex === idx"
+            (click)="selectOption(idx)">
+            <div class="radio-ring-indicator"><div class="radio-inner-dot"></div></div>
+            <div class="option-content-block">
+              <span class="option-label-badge">{{ opt.optionLabel }}.</span>
+              <div class="option-text-wrapper">
+                <span class="option-label-string" [innerHTML]="opt.optionText"></span>
+                <div class="option-media-container" *ngIf="opt.imageUrl">
+                  <img [src]="opt.imageUrl" alt="Option Image" class="option-embedded-img" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="navigation-sidebar">
+      <h3>Question Matrix</h3>
+      <div class="palette-grid">
+        <button
+          type="button" class="palette-node"
+          *ngFor="let q of activeQuestions; let idx = index"
+          [class.current]="currentIndex === idx"
+          [class.answered]="q.userSelectedIndex !== undefined"
+          [class.review-flagged]="q.markedReviewState"
+          (click)="jumpToQuestion(idx)">
+          {{ idx + 1 }}
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <div class="exam-action-footer">
+    <button type="button" class="nav-btn" [disabled]="currentIndex === 0" (click)="goToPrev()">
+      <i class="fas fa-chevron-left"></i> Previous
+    </button>
+    <button type="button" class="submit-action-btn" *ngIf="currentIndex === activeQuestions.length - 1" [disabled]="isSubmittingTest" (click)="submitExam()">
+      {{ isSubmittingTest ? 'Processing Responses...' : 'Final Submission' }}
+    </button>
+    <button type="button" class="nav-btn next-accent" *ngIf="currentIndex < activeQuestions.length - 1" (click)="goToNext()">
+      Next <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     RESULT & REVIEW OVERLAY
+     ═══════════════════════════════════════════════ -->
+<div class="result-overlay" *ngIf="showAiReportPanel">
+  <div class="result-scroll">
+
+    <!-- AI ANALYZING -->
+    <div class="analyzing-wrapper" *ngIf="isAnalyzing">
+      <div class="analyzing-card">
+        <div class="orbit-system">
+          <div class="orbit-ring r1"></div>
+          <div class="orbit-ring r2"></div>
+          <div class="orbit-dot d1"></div>
+          <div class="orbit-dot d2"></div>
+        </div>
+        <div class="brain-core">
+          <div class="pulse p1"></div>
+          <div class="pulse p2"></div>
+          <i class="fas fa-brain"></i>
+        </div>
+        <h2>Analyzing Your Test</h2>
+        <p>AI is evaluating your responses and generating insights</p>
+        <div class="scan-steps">
+          <div class="step" [class.active]="analyzePhase >= 1" [class.done]="analyzePhase > 1">
+            <i class="fas" [ngClass]="analyzePhase > 1 ? 'fa-check-circle' : 'fa-spinner fa-spin'"></i>
+            <span>Collecting Answers</span>
+          </div>
+          <div class="step" [class.active]="analyzePhase >= 2" [class.done]="analyzePhase > 2">
+            <i class="fas" [ngClass]="analyzePhase > 2 ? 'fa-check-circle' : 'fa-spinner fa-spin'"></i>
+            <span>Evaluating Performance</span>
+          </div>
+          <div class="step" [class.active]="analyzePhase >= 3" [class.done]="analyzePhase > 3">
+            <i class="fas" [ngClass]="analyzePhase > 3 ? 'fa-check-circle' : 'fa-spinner fa-spin'"></i>
+            <span>Generating Report</span>
+          </div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" [style.width.%]="analyzeProgress"></div></div>
+      </div>
+    </div>
+
+    <!-- RESULT SUMMARY -->
+    <div class="result-content" *ngIf="!isAnalyzing && examReport">
+      <div class="result-header">
+        <div class="result-icon" [ngClass]="scoreClass(examReport.percentage || 0)">
+          <i class="fas" [ngClass]="(examReport.percentage || 0) >= 50 ? 'fa-trophy' : 'fa-medal'"></i>
+        </div>
+        <h1>Test Complete!</h1>
+        <p>{{ testTitle }}</p>
+      </div>
+
+      <!-- Score Card -->
+      <div class="score-card" [ngClass]="scoreClass(examReport.percentage || 0)">
+        <div class="score-big">{{ examReport.percentage || 0 }}%</div>
+        <div class="score-grade">Grade: {{ examReport.grade || '—' }}</div>
+        <div class="score-raw">{{ examReport.netScore || 0 }} marks · {{ examReport.correct || 0 }}/{{ examReport.totalQuestions || 0 }} correct</div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-box correct">
+          <i class="fas fa-check-circle"></i>
+          <span class="stat-val">{{ examReport.correct || 0 }}</span>
+          <span class="stat-lbl">Correct</span>
+        </div>
+        <div class="stat-box wrong">
+          <i class="fas fa-times-circle"></i>
+          <span class="stat-val">{{ examReport.wrong || 0 }}</span>
+          <span class="stat-lbl">Wrong</span>
+        </div>
+        <div class="stat-box skipped">
+          <i class="fas fa-forward"></i>
+          <span class="stat-val">{{ examReport.skipped || 0 }}</span>
+          <span class="stat-lbl">Skipped</span>
+        </div>
+        <div class="stat-box accuracy">
+          <i class="fas fa-bullseye"></i>
+          <span class="stat-val">{{ examReport.accuracy || 0 }}%</span>
+          <span class="stat-lbl">Accuracy</span>
+        </div>
+      </div>
+
+      <!-- Marks Breakdown -->
+      <div class="marks-row">
+        <div class="mark-item"><span class="mark-label">Positive</span><span class="mark-val positive">+{{ examReport.positiveMarks || 0 }}</span></div>
+        <div class="mark-item"><span class="mark-label">Negative</span><span class="mark-val negative">{{ examReport.negativeMarks || 0 }}</span></div>
+        <div class="mark-item"><span class="mark-label">Net Score</span><span class="mark-val net">{{ examReport.netScore || 0 }}</span></div>
+        <div class="mark-item"><span class="mark-label">Rank</span><span class="mark-val">#{{ examReport.rank || '—' }}</span></div>
+      </div>
+
+      <!-- AI Summary -->
+      <div class="ai-summary" *ngIf="examReport.analysis?.summary">
+        <div class="ai-tag"><i class="fas fa-robot"></i> AI Analysis</div>
+        <p>{{ examReport.analysis.summary }}</p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="result-actions">
+        <button class="btn-review" (click)="showReviewList()">
+          <i class="fas fa-list-check"></i> Review Answers
+        </button>
+        <button class="btn-back" (click)="closeAiDashboardView()">
+          {{ backLabel }} <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- REVIEW LIST -->
+    <div class="review-content" *ngIf="!isAnalyzing && showDetailedLogsGrid && reviewData">
+      <div class="review-header">
+        <button class="btn-back-sm" (click)="hideReviewList()">
+          <i class="fas fa-arrow-left"></i> Back to Result
+        </button>
+        <h2>Review Answers</h2>
+        <p>{{ reviewData.length }} questions · {{ getReviewCorrectCount() }} correct</p>
+      </div>
+
+      <div class="review-question" *ngFor="let q of reviewData; let i = index">
+        <div class="rq-header">
+          <span class="rq-num">Q{{ i + 1 }}</span>
+          <span class="rq-status" [class.correct]="q.isCorrect" [class.wrong]="!q.isCorrect">
+            <i class="fas" [ngClass]="q.isCorrect ? 'fa-check' : 'fa-times'"></i>
+            {{ q.isCorrect ? 'Correct' : 'Wrong' }}
+          </span>
+          <span class="rq-diff" [ngClass]="q.difficulty?.toLowerCase()">{{ q.difficulty }}</span>
+        </div>
+        <p class="rq-text">{{ q.questionText }}</p>
+        <div class="rq-options">
+          <div class="rq-opt" *ngFor="let opt of q.options"
+            [class.correct-opt]="opt.id === q.correctAnswerId"
+            [class.wrong-opt]="opt.id === q.studentAnswerId && !q.isCorrect"
+            [class.neutral]="opt.id !== q.correctAnswerId && opt.id !== q.studentAnswerId">
+            <span class="opt-label">{{ opt.label }}</span>
+            <span class="opt-text">{{ opt.text }}</span>
+            <i class="fas fa-check opt-check" *ngIf="opt.id === q.correctAnswerId"></i>
+            <i class="fas fa-times opt-cross" *ngIf="opt.id === q.studentAnswerId && !q.isCorrect"></i>
+          </div>
+        </div>
+        <div class="rq-explain" *ngIf="q.explanation">
+          <i class="fas fa-lightbulb"></i>
+          <p>{{ q.explanation }}</p>
+        </div>
+        <div class="rq-meta">
+          <span><i class="fas fa-clock"></i> {{ q.timeTaken || 0 }}s</span>
+          <span><i class="fas fa-book"></i> {{ q.chapter }}</span>
+          <span><i class="fas fa-tag"></i> {{ q.topic }}</span>
+        </div>
+      </div>
+
+      <div class="review-footer">
+        <button class="btn-back" (click)="closeAiDashboardView()">
+          {{ backLabel }} <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- EXIT WARNING MODAL -->
+<div class="custom-modal-backdrop" *ngIf="showExitWarningModal">
+  <div class="lockout-warning-box">
+    <div class="warn-icon"><i class="fas fa-exclamation-triangle"></i></div>
+    <h2>Exit Active Assessment Session?</h2>
+    <p>Your inputs selected up to this action step are stored. You can return later to resume parameters if remaining timeline allocations permit.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn-resume" (click)="dismissExitVerification()">Resume Session</button>
+      <button type="button" class="btn-abort" (click)="confirmExitAndDestroy()">Exit Test</button>
+    </div>
+  </div>
+</div>

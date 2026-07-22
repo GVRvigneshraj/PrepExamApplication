@@ -1,0 +1,181 @@
+<div class="history-container">
+  <!-- Header -->
+  <header class="history-header">
+    <div class="header-content">
+      <h1>Test History</h1>
+      <p>Track your performance across all tests</p>
+    </div>
+    <div class="header-stats">
+      <div class="stat-pill">
+        <span class="stat-num">{{ historyItems().length }}</span>
+        <span class="stat-text">Tests</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <button class="tab-btn" [class.active]="activeTab() === 'assessment'" (click)="switchTab('assessment')">
+      <i class="fas fa-clipboard-check"></i>
+      <span>Assessment</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'mcq'" (click)="switchTab('mcq')">
+      <i class="fas fa-question-circle"></i>
+      <span>MCQ Practice</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'mock'" (click)="switchTab('mock')">
+      <i class="fas fa-layer-group"></i>
+      <span>Mock Series</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'pyq'" (click)="switchTab('pyq')">
+      <i class="fas fa-history"></i>
+      <span>PYQ</span>
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Search tests..." [(ngModel)]="searchText" (input)="onSearch()" />
+    </div>
+    <select class="filter-select" [(ngModel)]="selectedSubject" (change)="onFilterChange()">
+      <option value="all">All Subjects</option>
+      <option *ngFor="let s of subjects.slice(1)" [value]="s">{{ s }}</option>
+    </select>
+    <select class="filter-select" [(ngModel)]="sortBy" (change)="onFilterChange()">
+      <option *ngFor="let opt of sortOptions" [value]="opt.value">{{ opt.label }}</option>
+    </select>
+  </div>
+
+  <!-- History List -->
+  <div class="history-list" (scroll)="onScroll($event)">
+    <!-- Loading -->
+    <div class="loading-skeleton" *ngIf="isLoading() && historyItems().length === 0">
+      <div class="skeleton-card" *ngFor="let i of [1,2,3,4,5]">
+        <div class="sk-left">
+          <div class="sk-circle"></div>
+          <div class="sk-lines">
+            <div class="sk-line long"></div>
+            <div class="sk-line short"></div>
+          </div>
+        </div>
+        <div class="sk-right">
+          <div class="sk-line tiny"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading() && historyItems().length === 0">
+      <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+      <h3>No tests found</h3>
+      <p>Complete a test to see your history here</p>
+    </div>
+
+    <!-- History Cards -->
+    <div class="history-card" *ngFor="let item of historyItems(); trackBy: trackByFn" (click)="openDetail(item)">
+      <div class="card-left">
+        <div class="card-score-ring" [style.borderColor]="getScoreColor(item.percentage)">
+          <svg viewBox="0 0 36 36">
+            <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            <path class="ring-fill" [attr.stroke]="getScoreColor(item.percentage)" [attr.stroke-dasharray]="item.percentage + ', 100'" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          </svg>
+          <span class="ring-text">{{ item.percentage }}%</span>
+        </div>
+      </div>
+
+      <div class="card-center">
+        <div class="card-top-row">
+          <h3 class="card-title">{{ item.testName }}</h3>
+          <span class="status-badge" [style.background]="getStatusColor(item.status) + '15'" [style.color]="getStatusColor(item.status)">
+            {{ item.status }}
+          </span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-tag" [style.background]="getSubjectColor(item.subject) + '12'" [style.color]="getSubjectColor(item.subject)">
+            {{ item.subject }}
+          </span>
+          <span class="meta-text" *ngIf="item.chapter">{{ item.chapter }}</span>
+          <span class="meta-dot">·</span>
+          <span class="meta-text">{{ item.date }}</span>
+        </div>
+        <div class="card-stats">
+          <span class="stat"><i class="fas fa-check" style="color:#22c55e"></i> {{ item.correct }}</span>
+          <span class="stat"><i class="fas fa-times" style="color:#ef4444"></i> {{ item.wrong }}</span>
+          <span class="stat"><i class="fas fa-forward" style="color:#94a3b8"></i> {{ item.skipped }}</span>
+          <span class="stat"><i class="fas fa-clock" style="color:#64748b"></i> {{ item.durationMinutes }}m</span>
+        </div>
+      </div>
+
+      <div class="card-right">
+        <span class="diff-badge" [style.color]="getDifficultyColor(item.difficulty)">
+          {{ item.difficulty }}
+        </span>
+        <span class="attempt-badge">Attempt #{{ item.attemptNumber }}</span>
+        <i class="fas fa-chevron-right card-arrow"></i>
+      </div>
+    </div>
+
+    <!-- Load More -->
+    <div class="load-more" *ngIf="isLoadingMore()">
+      <div class="spinner-small"></div>
+      <span>Loading more...</span>
+    </div>
+
+    <div class="end-message" *ngIf="!hasMore() && historyItems().length > 0 && !isLoading()">
+      <i class="fas fa-check-circle"></i> You've seen all results
+    </div>
+  </div>
+</div>
+
+<!-- Detail Overlay -->
+<div class="detail-overlay" *ngIf="selectedDetail()" (click)="closeDetail()">
+  <div class="detail-panel" (click)="$event.stopPropagation()">
+    <div class="detail-header">
+      <button class="back-btn" (click)="closeDetail()"><i class="fas fa-arrow-left"></i></button>
+      <h2>{{ selectedDetail()?.testName }}</h2>
+      <div class="detail-score" [style.background]="getScoreBg(selectedDetail()?.percentage || 0)">
+        <span [style.color]="getScoreColor(selectedDetail()?.percentage || 0)">{{ selectedDetail()?.percentage }}%</span>
+      </div>
+    </div>
+
+    <div class="detail-stats-grid">
+      <div class="detail-stat">
+        <div class="ds-icon" style="background:#dcfce7;color:#22c55e"><i class="fas fa-check"></i></div>
+        <span class="ds-val">{{ selectedDetail()?.correct }}</span>
+        <span class="ds-lbl">Correct</span>
+      </div>
+      <div class="detail-stat">
+        <div class="ds-icon" style="background:#fee2e2;color:#ef4444"><i class="fas fa-times"></i></div>
+        <span class="ds-val">{{ selectedDetail()?.wrong }}</span>
+        <span class="ds-lbl">Wrong</span>
+      </div>
+      <div class="detail-stat">
+        <div class="ds-icon" style="background:#f1f5f9;color:#94a3b8"><i class="fas fa-forward"></i></div>
+        <span class="ds-val">{{ selectedDetail()?.skipped }}</span>
+        <span class="ds-lbl">Skipped</span>
+      </div>
+      <div class="detail-stat">
+        <div class="ds-icon" style="background:#eef2ff;color:#4f46e5"><i class="fas fa-bullseye"></i></div>
+        <span class="ds-val">{{ selectedDetail()?.accuracy }}%</span>
+        <span class="ds-lbl">Accuracy</span>
+      </div>
+    </div>
+
+    <div class="detail-info">
+      <div class="info-row"><span>Subject</span><span>{{ selectedDetail()?.subject }}</span></div>
+      <div class="info-row"><span>Chapter</span><span>{{ selectedDetail()?.chapter }}</span></div>
+      <div class="info-row"><span>Topic</span><span>{{ selectedDetail()?.topic }}</span></div>
+      <div class="info-row"><span>Duration</span><span>{{ selectedDetail()?.durationMinutes }} minutes</span></div>
+      <div class="info-row"><span>Difficulty</span><span [style.color]="getDifficultyColor(selectedDetail()?.difficulty || '')">{{ selectedDetail()?.difficulty }}</span></div>
+      <div class="info-row"><span>Score</span><span>{{ selectedDetail()?.score }}/{{ selectedDetail()?.totalMarks }}</span></div>
+      <div class="info-row"><span>Grade</span><span class="grade-badge">{{ selectedDetail()?.grade || '—' }}</span></div>
+    </div>
+
+    <div class="detail-actions">
+      <button class="action-btn primary"><i class="fas fa-list-check"></i> Review Answers</button>
+      <button class="action-btn secondary"><i class="fas fa-share-alt"></i> Share</button>
+    </div>
+  </div>
+</div>

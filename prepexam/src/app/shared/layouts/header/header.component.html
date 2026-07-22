@@ -1,0 +1,99 @@
+<header class="top-header">
+
+  <!-- Left -->
+  <div class="header-left">
+
+    <!-- Desktop Sidebar Toggle -->
+    <!-- <button
+      class="sidebar-toggle desktop-only"
+      type="button"
+      (click)="onToggleSidebar()">
+
+      <i class="fas fa-bars"></i>
+
+    </button> -->
+
+    <!-- Mobile Logo -->
+    <div class="mobile-brand">
+
+      <div
+        class="brand-logo">
+         <svg width="38" height="38" viewBox="0 0 48 48" fill="none">
+                    <rect width="48" height="48" rx="14" fill="#6C5CE7" />
+                    <path d="M24 11L33 28H15L24 11Z" fill="white" opacity="0.95" />
+                    <circle cx="24" cy="34" r="4.5" fill="white" opacity="0.95" />
+                </svg>
+      </div>
+      <div class="brand-text">
+        <h3>PrepExam</h3>
+        <span>Learning Platform</span>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Right -->
+  <div class="header-right">
+
+    <!-- Search Desktop -->
+    <div class="header-search desktop-only">
+
+      <i class="fas fa-search search-icon"></i>
+
+      <input
+        type="text"
+        placeholder="Search anything...">
+
+      <span class="shortcut">Ctrl + K</span>
+
+    </div>
+
+    <!-- Notification -->
+    <button
+      class="header-icon-btn"
+      type="button"
+      (click)="onToggleNotifications()"
+      [class.active]="isNotificationsOpen">
+
+      <i class="fas fa-bell"></i>
+
+      <span class="notification-dot">3</span>
+
+    </button>
+
+    <!-- Profile Desktop -->
+    <button
+      class="user-menu-trigger desktop-only"
+      type="button"
+      (click)="onToggleProfile()"
+      [class.active]="isProfileOpen">
+
+      <div class="mini-avatar">
+        VR
+      </div>
+
+      <div class="user-info">
+        <span class="name">Vignesh</span>
+        <span class="role">Student</span>
+      </div>
+
+      <i class="fas fa-chevron-down"></i>
+
+    </button>
+
+    <!-- Mobile Profile -->
+    <button
+      class="mobile-profile"
+      type="button"
+      (click)="onToggleProfile()">
+
+      <div class="mini-avatar">
+        VR
+      </div>
+
+    </button>
+
+  </div>
+
+</header>

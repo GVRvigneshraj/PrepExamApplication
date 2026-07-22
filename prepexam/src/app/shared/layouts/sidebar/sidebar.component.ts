@@ -1,0 +1,28 @@
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+
+@Component({
+  selector: 'app-sidebar',
+  standalone: true,
+  imports: [CommonModule, RouterLink, RouterLinkActive],
+  templateUrl: './sidebar.component.html',
+  styleUrl: './sidebar.component.scss',
+})
+export class SidebarComponent {
+  @Input() collapsed = false;
+  @Input() mobileOpen = false;
+
+  @Output() sidebarCollapseChange = new EventEmitter<boolean>();
+
+  constructor(private router: Router) { }
+
+  onToggleCollapse(): void {
+    this.collapsed = !this.collapsed;
+    this.sidebarCollapseChange.emit(this.collapsed);
+  }
+
+  get exam(): string {
+    return localStorage.getItem('selectedExam') || 'neet';
+  }
+}

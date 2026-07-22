@@ -1,0 +1,12 @@
+<nav class="mobile-nav">
+  <button
+    *ngFor="let item of menuItems"
+    [class.active]="isActive(item.route)"
+    (click)="navigate(item.route)">
+    <div class="nav-icon-wrap">
+      <i [class]="item.icon"></i>
+      <span *ngIf="item.badge > 0" class="nav-badge">{{ item.badge }}</span>
+    </div>
+    <span class="nav-label">{{ item.label }}</span>
+  </button>
+</nav>

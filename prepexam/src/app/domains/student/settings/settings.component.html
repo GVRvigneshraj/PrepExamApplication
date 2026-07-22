@@ -1,0 +1,238 @@
+<div class="settings-container">
+  <div class="settings-header">
+    <h1>Settings</h1>
+    <p>Manage your account and preferences</p>
+  </div>
+
+  <div class="settings-layout">
+    <!-- Sidebar Navigation -->
+    <nav class="settings-nav">
+      <button
+        *ngFor="let section of sections"
+        type="button"
+        class="nav-item"
+        [class.active]="activeSection() === section.key"
+        (click)="setSection(section.key)">
+        <i [class]="section.icon"></i>
+        <span>{{ section.label }}</span>
+      </button>
+    </nav>
+
+    <!-- Content -->
+    <div class="settings-content">
+
+      <!-- Account -->
+      <section *ngIf="activeSection() === 'account'" class="settings-section">
+        <h2>Account Settings</h2>
+        <p class="section-desc">Manage your personal information</p>
+
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" [ngModel]="profile().fullName" (ngModelChange)="profile.update(p => ({...p, fullName: $event}))" />
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" [ngModel]="profile().email" (ngModelChange)="profile.update(p => ({...p, email: $event}))" />
+        </div>
+
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" [ngModel]="profile().phone" (ngModelChange)="profile.update(p => ({...p, phone: $event}))" placeholder="+91 XXXXX XXXXX" />
+        </div>
+
+        <button class="btn-primary" (click)="saveProfile()">Save Changes</button>
+
+        <div class="danger-zone">
+          <h3>Danger Zone</h3>
+          <button class="btn-danger" (click)="logout()">Log Out</button>
+        </div>
+      </section>
+
+      <!-- Learning -->
+      <section *ngIf="activeSection() === 'learning'" class="settings-section">
+        <h2>Learning Preferences</h2>
+        <p class="section-desc">Customize your learning experience</p>
+
+        <div class="form-group">
+          <label>Preferred Language</label>
+          <select [ngModel]="learningSettings().preferredLanguage" (ngModelChange)="learningSettings.update(s => ({...s, preferredLanguage: $event}))">
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="ta">Tamil</option>
+            <option value="te">Telugu</option>
+            <option value="bn">Bengali</option>
+            <option value="mr">Marathi</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Daily Goal (Questions)</label>
+          <input type="number" [ngModel]="learningSettings().dailyGoal" (ngModelChange)="learningSettings.update(s => ({...s, dailyGoal: $event}))" min="10" max="200" />
+        </div>
+
+        <div class="form-group">
+          <label>Target Score</label>
+          <input type="number" [ngModel]="learningSettings().targetScore" (ngModelChange)="learningSettings.update(s => ({...s, targetScore: $event}))" min="100" max="720" />
+        </div>
+
+        <div class="form-group">
+          <label>Daily Study Hours</label>
+          <input type="number" [ngModel]="learningSettings().studyHours" (ngModelChange)="learningSettings.update(s => ({...s, studyHours: $event}))" min="1" max="12" />
+        </div>
+
+        <div class="form-group">
+          <label>Default Exam</label>
+          <select [ngModel]="learningSettings().defaultExam" (ngModelChange)="learningSettings.update(s => ({...s, defaultExam: $event}))">
+            <option value="neet">NEET</option>
+            <option value="jee">JEE</option>
+            <option value="upsc">UPSC</option>
+            <option value="ssc">SSC</option>
+            <option value="tnpsc">TNPSC</option>
+            <option value="railway">Railway</option>
+            <option value="banking">Banking</option>
+            <option value="defence">Defence</option>
+          </select>
+        </div>
+
+        <button class="btn-primary" (click)="saveLearning()">Save Preferences</button>
+      </section>
+
+      <!-- Appearance -->
+      <section *ngIf="activeSection() === 'appearance'" class="settings-section">
+        <h2>Appearance</h2>
+        <p class="section-desc">Customize how the app looks</p>
+
+        <div class="theme-options">
+          <button type="button" class="theme-option" [class.active]="appearanceSettings().theme === 'light'" (click)="setTheme('light')">
+            <i class="fas fa-sun"></i>
+            <span>Light</span>
+          </button>
+          <button type="button" class="theme-option" [class.active]="appearanceSettings().theme === 'dark'" (click)="setTheme('dark')">
+            <i class="fas fa-moon"></i>
+            <span>Dark</span>
+          </button>
+          <button type="button" class="theme-option" [class.active]="appearanceSettings().theme === 'system'" (click)="setTheme('system')">
+            <i class="fas fa-desktop"></i>
+            <span>System</span>
+          </button>
+        </div>
+
+        <div class="form-group">
+          <label>Font Size</label>
+          <select [ngModel]="appearanceSettings().fontSize" (ngModelChange)="appearanceSettings.update(s => ({...s, fontSize: $event}))">
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Notifications -->
+      <section *ngIf="activeSection() === 'notifications'" class="settings-section">
+        <h2>Notification Settings</h2>
+        <p class="section-desc">Control what notifications you receive</p>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <i class="fas fa-bell"></i>
+            <div>
+              <span class="toggle-label">Push Notifications</span>
+              <span class="toggle-desc">Receive push notifications on your device</span>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [ngModel]="notificationSettings().pushNotifications" (ngModelChange)="updateNotification('pushNotifications', $event)" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <i class="fas fa-envelope"></i>
+            <div>
+              <span class="toggle-label">Email Notifications</span>
+              <span class="toggle-desc">Receive notifications via email</span>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [ngModel]="notificationSettings().emailNotifications" (ngModelChange)="updateNotification('emailNotifications', $event)" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <i class="fas fa-clock"></i>
+            <div>
+              <span class="toggle-label">Reminder Notifications</span>
+              <span class="toggle-desc">Get reminded about study sessions</span>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [ngModel]="notificationSettings().reminderNotifications" (ngModelChange)="updateNotification('reminderNotifications', $event)" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <i class="fas fa-calendar-check"></i>
+            <div>
+              <span class="toggle-label">Daily Practice Reminder</span>
+              <span class="toggle-desc">Daily reminder to practice questions</span>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [ngModel]="notificationSettings().dailyPracticeReminder" (ngModelChange)="updateNotification('dailyPracticeReminder', $event)" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <button class="btn-primary" (click)="saveNotifications()">Save Settings</button>
+      </section>
+
+      <!-- Privacy -->
+      <section *ngIf="activeSection() === 'privacy'" class="settings-section">
+        <h2>Privacy & Security</h2>
+        <p class="section-desc">Manage your security settings</p>
+
+        <div class="info-card">
+          <i class="fas fa-lock"></i>
+          <div>
+            <h4>Password</h4>
+            <p>Change your account password</p>
+          </div>
+          <button class="btn-outline">Change</button>
+        </div>
+
+        <div class="info-card">
+          <i class="fas fa-mobile-alt"></i>
+          <div>
+            <h4>Active Sessions</h4>
+            <p>Manage devices logged into your account</p>
+          </div>
+          <button class="btn-outline">View</button>
+        </div>
+      </section>
+
+      <!-- About -->
+      <section *ngIf="activeSection() === 'about'" class="settings-section">
+        <h2>About PrepExam AI</h2>
+        <p class="section-desc">Application information</p>
+
+        <div class="about-info">
+          <div class="about-row"><span>App Version</span><span>2.1.0</span></div>
+          <div class="about-row"><span>Build</span><span>2025.07.18</span></div>
+          <div class="about-row"><span>Framework</span><span>Angular 21</span></div>
+        </div>
+
+        <div class="about-links">
+          <a href="#">Terms & Conditions</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Contact Support</a>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
