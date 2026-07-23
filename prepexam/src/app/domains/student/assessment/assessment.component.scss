@@ -293,9 +293,12 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(8, 10, 18, 0.65);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.35), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(109, 76, 255, 0.42), transparent 35%),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.66), rgba(30, 64, 175, 0.7));
+  backdrop-filter: blur(16px) saturate(0.95);
+  -webkit-backdrop-filter: blur(16px) saturate(0.95);
   z-index: 999999;
   display: flex;
   justify-content: center;
@@ -303,6 +306,21 @@
   padding: 20px;
   overflow: hidden;
   box-sizing: border-box;
+  animation: aiBackdropIn 0.3s ease forwards;
+}
+
+/* Prevent background scroll and interactions */
+body.assessment-modal-open {
+  overflow: hidden;
+  pointer-events: none;
+}
+
+body.assessment-modal-open .container-root {
+  pointer-events: none;
+}
+
+body.assessment-modal-open .ai-popup-backdrop {
+  pointer-events: auto;
 }
 
 /* Background technical glowing bubbles */
@@ -338,6 +356,8 @@
   position: relative;
   z-index: 5;
   background: #ffffff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border: 1px solid rgba(109, 76, 255, 0.15);
   border-radius: 24px;
   padding: 40px 32px 32px 32px;
@@ -475,6 +495,11 @@
 }
 
 /* Keyframes Animations */
+@keyframes aiBackdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 @keyframes aiModalReveal {
   from {
     opacity: 0;

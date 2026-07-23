@@ -213,8 +213,33 @@
 .review-footer { margin-top: 2rem; display: flex; justify-content: center; }
 
 /* ═══ EXIT MODAL ═══ */
-.custom-modal-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 999999999; display: flex; justify-content: center; align-items: center; padding: 1rem; }
-.lockout-warning-box { background: var(--bg-surface); padding: 2.25rem; border-radius: 16px; max-width: 440px; width: 100%; text-align: center;
+.custom-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at top left, rgba(30, 64, 175, 0.22), transparent 28%),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.72), rgba(30, 64, 175, 0.42));
+  backdrop-filter: blur(14px) saturate(0.92);
+  -webkit-backdrop-filter: blur(14px) saturate(0.92);
+  z-index: 999999999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  animation: testModalBackdropIn 0.25s ease forwards;
+  pointer-events: auto;
+}
+
+.lockout-warning-box {
+  background: var(--bg-surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding: 2.25rem;
+  border-radius: 16px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+
   .warn-icon { font-size: 3.5rem; color: var(--danger-color); margin-bottom: 1.25rem; }
   h2 { margin: 0 0 0.5rem 0; font-size: 1.5rem; color: var(--text-main); font-weight: 700; }
   p { color: var(--text-muted); line-height: 1.6; margin: 0 0 1.75rem 0; font-size: 0.95rem; }
@@ -225,6 +250,11 @@
   }
 }
 
+@keyframes testModalBackdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 /* ═══ KEYFRAMES ═══ */
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
@@ -233,15 +263,39 @@
 /* ═══ RESPONSIVE ═══ */
 @media (max-width: 768px) {
   .exam-workspace-layout { flex-direction: column; }
+  .question-canvas { padding: 1rem; }
+  .question-card { padding: 1rem; }
+  .meta-row { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+  .review-toggle-btn { width: 100%; justify-content: center; }
   .navigation-sidebar { width: 100%; max-height: 110px; border-left: none; border-top: 1px solid var(--border-color); padding: 0.75rem 1rem; h3 { margin-bottom: 0.6rem; font-size: 0.7rem; } .palette-grid { grid-template-columns: repeat(auto-fill, minmax(36px, 1fr)); gap: 0.4rem; } .palette-node { height: 34px; font-size: 0.85rem; } }
-  .exam-header { padding: 0.75rem 1rem; flex-direction: row; flex-wrap: nowrap; align-items: center; gap: 0.5rem; .header-left h2 { font-size: 1rem; } .category-tag { font-size: 0.65rem; } .header-right { flex-shrink: 0; gap: 0.5rem; .progress-indicator { font-size: 0.78rem; padding: 0.35rem 0.65rem; white-space: nowrap; } .quit-btn { flex-shrink: 0; font-size: 0.78rem; padding: 0.35rem 0.75rem; white-space: nowrap; } } }
+  .exam-header {
+    padding: 0.75rem 1rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    .header-left {
+      width: 100%;
+      h2 { font-size: 1rem; white-space: normal; overflow: visible; text-overflow: unset; }
+    }
+    .category-tag { font-size: 0.65rem; }
+    .header-right {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      .global-timer { flex: 1 1 0; justify-content: center; min-width: 140px; font-size: 0.78rem; padding: 0.4rem 0.7rem; }
+      .quit-btn { flex: 1 1 0; justify-content: center; min-width: 140px; font-size: 0.78rem; padding: 0.4rem 0.75rem; white-space: nowrap; }
+    }
+  }
   .result-scroll { padding: 1.5rem 1rem; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .marks-row { grid-template-columns: repeat(2, 1fr); }
   .result-actions { flex-direction: column; }
 }
 @media (max-width: 480px) {
-  .exam-header { padding: 0.55rem 0.75rem; .header-left { min-width: 0; flex: 1 1 auto; h2 { font-size: 0.85rem; } } .header-right { flex-shrink: 0; gap: 0.35rem; } }
+  .exam-header { padding: 0.55rem 0.75rem; .header-left { min-width: 0; flex: 1 1 auto; h2 { font-size: 0.9rem; line-height: 1.35; } } .header-right { gap: 0.4rem; .global-timer, .quit-btn { width: 100%; flex-basis: 100%; } } }
   .question-canvas { padding: 0.6rem; }
   .navigation-sidebar { max-height: 74px; padding: 0.45rem 0.7rem; h3 { display: none; } .palette-grid { grid-template-columns: repeat(auto-fill, minmax(28px, 1fr)); gap: 0.3rem; } .palette-node { height: 26px; font-size: 0.72rem; } }
   .exam-action-footer { padding: 0.55rem 0.7rem; .nav-btn { padding: 0.55rem 0.9rem; font-size: 0.8rem; } .submit-action-btn { padding: 0.55rem 1.25rem; font-size: 0.8rem; } }

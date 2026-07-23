@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, ChangeDetectorRef, OnInit, signal } from '@angular/core';
+import { Component, computed, ChangeDetectorRef, ElementRef, HostListener, OnInit, signal, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import { StudentMockService } from '../services/student-mock.service';
 import { TestPage } from '../../../shared/components/test-page/test-page';
+import { AppAlertService } from '../../../shared/services/alert.service';
 
 export interface MockSeries {
   seriesId: number;
@@ -28,12 +29,6 @@ export interface MockSeriesResponse {
   completedSeries: number;
 }
 
-export interface ToastItem {
-  id: string;
-  msg: string;
-  type: 'ok' | 'inf';
-}
-
 @Component({
   selector: 'app-mock',
   standalone: true,
@@ -43,9 +38,13 @@ export interface ToastItem {
 })
 export class StudentMockComponent implements OnInit {
 
+  @ViewChild('modalCard') modalCardRef?: ElementRef<HTMLElement>;
+  @ViewChild('cancelButton') cancelButtonRef?: ElementRef<HTMLButtonElement>;
+
   constructor(
     private mockService: StudentMockService,
     private cdr: ChangeDetectorRef,
+    private alertService: AppAlertService,
   ) {}
 
   // ── State ──
@@ -55,7 +54,6 @@ export class StudentMockComponent implements OnInit {
   isLoading = signal(false);
   loadingTitle = signal('');
   loadingSub = signal('');
-  toasts = signal<ToastItem[]>([]);
   expandedSeries = signal<Set<number>>(new Set());
 
   // Test state
@@ -71,6 +69,13 @@ export class StudentMockComponent implements OnInit {
   historyList = signal<any[]>([]);
   historyDetail = signal<any>(null);
   selectedAttempt = signal<any>(null);
+
+  // Start confirmation state
+  showStartConfirm = signal(false);
+  closingStartConfirm = signal(false);
+  pendingStartRequest = signal<any | null>(null);
+  private lastFocusedElement: HTMLElement | null = null;
+  private readonly bodyScrollClass = 'mock-modal-open';
 
   // ── Computed ──
   readonly headerStats = computed(() => {
@@ -99,12 +104,8 @@ export class StudentMockComponent implements OnInit {
         if (res && res.success && res.data) {
           this.seriesMeta.set(res.data);
           this.seriesList.set(res.data.series || []);
-          // Expand all unlocked series by default
-          const expanded = new Set<number>();
-          res.data.series?.forEach((s: MockSeries) => {
-            if (s.unlocked) expanded.add(s.seriesId);
-          });
-          this.expandedSeries.set(expanded);
+          // Keep mock series cards compact by default and let the user expand them when needed
+          this.expandedSeries.set(new Set<number>());
         }
         this.cdr.detectChanges();
       },
@@ -140,15 +141,84 @@ export class StudentMockComponent implements OnInit {
   startSeriesTest(series: MockSeries, event: Event): void {
     event.stopPropagation();
     if (!series.unlocked) return;
-    this.startUniversalTest('MOCK_SERIES', series.seriesId, series.seriesName, series.durationMinutes, 'Back to Mock');
+    this.openStartConfirmation('MOCK_SERIES', series.seriesId, series.seriesName, series.durationMinutes, 'Back to Mock');
   }
 
   startSingleMock(): void {
-    this.startUniversalTest('MOCK', 0, 'Quick Mock Test', 45, 'Back to Mock');
+    this.openStartConfirmation('MOCK', 0, 'Quick Mock Test', 45, 'Back to Mock');
   }
 
   startPyq(year: number): void {
-    this.startUniversalTest('PYQ', year, 'NEET ' + year + ' Paper', 180, 'Back to Mock');
+    this.openStartConfirmation('PYQ', year, 'NEET ' + year + ' Paper', 180, 'Back to Mock');
+  }
+
+  openStartConfirmation(type: string, referenceId: number, testName: string, duration: number, backLabel: string): void {
+    this.lastFocusedElement = document.activeElement as HTMLElement | null;
+    this.pendingStartRequest.set({ type, referenceId, testName, duration, backLabel });
+    this.closingStartConfirm.set(false);
+    this.showStartConfirm.set(true);
+    this.lockPageScroll(true);
+
+    setTimeout(() => {
+      const focusTarget = this.cancelButtonRef?.nativeElement || this.modalCardRef?.nativeElement;
+      focusTarget?.focus();
+    });
+  }
+
+  closeStartConfirmation(): void {
+    if (!this.showStartConfirm()) return;
+    this.closingStartConfirm.set(true);
+    this.lockPageScroll(false);
+
+    setTimeout(() => {
+      this.showStartConfirm.set(false);
+      this.closingStartConfirm.set(false);
+      this.pendingStartRequest.set(null);
+      this.lastFocusedElement?.focus?.();
+    }, 220);
+  }
+
+  confirmStartTest(): void {
+    const request = this.pendingStartRequest();
+    if (!request) return;
+    this.closeStartConfirmation();
+    this.startUniversalTest(request.type, request.referenceId, request.testName, request.duration, request.backLabel);
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeydown(event: KeyboardEvent): void {
+    if (!this.showStartConfirm()) return;
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeStartConfirmation();
+      return;
+    }
+
+    if (event.key !== 'Tab') return;
+
+    const card = this.modalCardRef?.nativeElement;
+    if (!card) return;
+
+    const focusable = Array.from(card.querySelectorAll<HTMLElement>(
+      'button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])'
+    )).filter(el => !el.hasAttribute('disabled'));
+
+    if (focusable.length === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   }
 
   private startUniversalTest(type: string, referenceId: number, testName: string, duration: number, backLabel: string): void {
@@ -188,7 +258,7 @@ export class StudentMockComponent implements OnInit {
       error: (err) => {
         this.hideLoading();
         console.error('Failed to start test:', err);
-        this.showToast('Failed to start test', 'inf');
+        this.alertService.error('Failed to start test. Please try again.', 'Test Start Failed');
         this.cdr.detectChanges();
       }
     });
@@ -316,14 +386,6 @@ export class StudentMockComponent implements OnInit {
     return '#ef4444';
   }
 
-  showToast(msg: string, type: 'ok' | 'inf' = 'inf'): void {
-    const id = 'toast-' + Date.now();
-    this.toasts.update(arr => [...arr, { id, msg, type }]);
-    setTimeout(() => {
-      this.toasts.update(arr => arr.filter(t => t.id !== id));
-    }, 3000);
-  }
-
   private showLoading(title: string, sub: string): void {
     this.loadingTitle.set(title);
     this.loadingSub.set(sub);
@@ -332,5 +394,14 @@ export class StudentMockComponent implements OnInit {
 
   private hideLoading(): void {
     this.isLoading.set(false);
+  }
+
+  private lockPageScroll(lock: boolean): void {
+    const body = document.body;
+    if (lock) {
+      body.classList.add(this.bodyScrollClass);
+    } else {
+      body.classList.remove(this.bodyScrollClass);
+    }
   }
 }

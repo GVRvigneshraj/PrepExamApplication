@@ -2,6 +2,7 @@ import { Component, EventEmitter, HostListener, Input, OnInit, Output, AfterView
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { TestService } from '../../../core/services/test-service';
+import { AppAlertService } from '../../services/alert.service';
 
 declare var MathJax: any;
 
@@ -105,7 +106,11 @@ export class TestPage implements OnInit, AfterViewChecked, OnDestroy {
   isAllTypingComplete = false;
   showDetailedLogsGrid = false;
 
-  constructor(private testService: TestService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private testService: TestService,
+    private cdr: ChangeDetectorRef,
+    private alertService: AppAlertService,
+  ) {}
 
   /* ══════════════════════════════════════════
      LIFECYCLE
@@ -407,7 +412,7 @@ export class TestPage implements OnInit, AfterViewChecked, OnDestroy {
     this.isAnalyzing = false;
     this.showAiReportPanel = false;
     this.cdr.detectChanges();
-    alert('Error submitting test. Please check your network and retry.');
+    this.alertService.error('Error submitting test. Please check your network and retry.', 'Submission Failed');
   }
 
   /* ══════════════════════════════════════════

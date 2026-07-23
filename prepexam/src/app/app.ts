@@ -1,9 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AlertHostComponent } from './shared/ui/alert-host/alert-host.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, AlertHostComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

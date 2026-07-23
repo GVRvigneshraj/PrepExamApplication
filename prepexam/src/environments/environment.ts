@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiBaseUrl: 'https://cloudy-oxford-features-anyone.trycloudflare.com/api',
+  apiBaseUrl: 'https://protocols-kids-notes-bizarre.trycloudflare.com/api',
   appName: 'PrepExam AI',
   version: '1.0.0',
   jwtTokenKey: 'token',

@@ -88,6 +88,34 @@
   z-index: 1;
 }
 
+:host:has(app-test-page) .header {
+  display: none;
+}
+
+:host:has(app-test-page) .sidebar {
+  display: none;
+}
+
+:host:has(app-test-page) .ai-motivation-bot {
+  display: none;
+}
+
+:host:has(app-test-page) app-mobile-menu {
+  display: none;
+}
+
+:host:has(app-test-page) .page-content {
+  padding: 0;
+  background: transparent;
+  background-image: none;
+}
+
+:host:has(.ai-popup-backdrop) .dashboard-layout,
+:host:has(.start-confirm-overlay) .dashboard-layout {
+  filter: blur(8px) saturate(0.9);
+  transition: filter 0.22s ease;
+}
+
 // AI Copilot
 .ai-motivation-bot {
   position: fixed;

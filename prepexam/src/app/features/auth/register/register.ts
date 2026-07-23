@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
+import { AppAlertService } from '../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-register',
@@ -14,14 +15,13 @@ import { AuthService } from '../../../core/auth/auth.service';
 export class Register implements OnInit {
   registerForm!: FormGroup;
   isSubmitting = false;
-  showToast = false;
   errorMessage = '';
 
   // Visibility toggle states
   hidePassword = true;
   hideConfirmPassword = true;
 
-  constructor(private fb: FormBuilder, private router: Router, private authService: AuthService) {}
+  constructor(private fb: FormBuilder, private router: Router, private authService: AuthService, private alertService: AppAlertService) {}
 
   ngOnInit(): void {
     // Strong password pattern: Min 6 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
@@ -72,17 +72,17 @@ export class Register implements OnInit {
 
       this.authService.register(this.registerForm.value).subscribe({
         next: () => {
-          this.showToast = true;
           this.isSubmitting = false;
+          this.alertService.success('Registration successful. Redirecting to login...', 'Success');
 
           setTimeout(() => {
-            this.showToast = false;
             this.router.navigate(['/login']);
           }, 3000);
         },
         error: (err) => {
           this.isSubmitting = false;
           this.errorMessage = err?.error?.message || 'Registration failed. Please try again.';
+          this.alertService.error(err?.error?.message || 'Registration failed. Please try again.', 'Registration Failed');
         }
       });
     }

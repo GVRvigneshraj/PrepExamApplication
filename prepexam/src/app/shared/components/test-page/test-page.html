@@ -5,12 +5,7 @@
       <h2>{{ testTitle }}</h2>
     </div>
     <div class="header-right">
-      <span class="global-timer" *ngIf="durationMinutes" [class.time-warning]="globalTimerSeconds <= 300">
-        <i class="fas fa-clock"></i> {{ globalTimerDisplay }}
-      </span>
-      <span class="progress-indicator">
-        Question <strong>{{ currentIndex + 1 }}</strong> of {{ activeQuestions.length }}
-      </span>
+
       <button type="button" class="quit-btn" (click)="triggerExitVerification()">
         <i class="fas fa-times-circle"></i> Quit Test
       </button>
@@ -21,8 +16,13 @@
     <main class="question-canvas">
       <div class="question-card">
         <div class="meta-row">
-          <span class="q-number-badge">Question {{ currentIndex + 1 }}</span>
-          <button type="button" class="review-toggle-btn" [class.active-review]="currentQuestion.markedReviewState" (click)="toggleReviewMode()">
+          <span class="q-number-badge">Question <strong>{{ currentIndex + 1 }}</strong> of {{ activeQuestions.length
+            }}</span>
+          <span class="global-timer" *ngIf="durationMinutes" [class.time-warning]="globalTimerSeconds <= 300">
+            <i class="fas fa-clock"></i> {{ globalTimerDisplay }}
+          </span>
+          <button type="button" class="review-toggle-btn" [class.active-review]="currentQuestion.markedReviewState"
+            (click)="toggleReviewMode()">
             <i class="fas fa-bookmark"></i>
             {{ currentQuestion.markedReviewState ? 'Marked for Review' : 'Mark For Review' }}
           </button>
@@ -35,12 +35,11 @@
         </div>
 
         <div class="options-vertical-group">
-          <div
-            class="option-row"
-            *ngFor="let opt of currentQuestion.options; let idx = index"
-            [class.is-selected]="currentQuestion.userSelectedIndex === idx"
-            (click)="selectOption(idx)">
-            <div class="radio-ring-indicator"><div class="radio-inner-dot"></div></div>
+          <div class="option-row" *ngFor="let opt of currentQuestion.options; let idx = index"
+            [class.is-selected]="currentQuestion.userSelectedIndex === idx" (click)="selectOption(idx)">
+            <div class="radio-ring-indicator">
+              <div class="radio-inner-dot"></div>
+            </div>
             <div class="option-content-block">
               <span class="option-label-badge">{{ opt.optionLabel }}.</span>
               <div class="option-text-wrapper">
@@ -58,13 +57,9 @@
     <aside class="navigation-sidebar">
       <h3>Question Matrix</h3>
       <div class="palette-grid">
-        <button
-          type="button" class="palette-node"
-          *ngFor="let q of activeQuestions; let idx = index"
-          [class.current]="currentIndex === idx"
-          [class.answered]="q.userSelectedIndex !== undefined"
-          [class.review-flagged]="q.markedReviewState"
-          (click)="jumpToQuestion(idx)">
+        <button type="button" class="palette-node" *ngFor="let q of activeQuestions; let idx = index"
+          [class.current]="currentIndex === idx" [class.answered]="q.userSelectedIndex !== undefined"
+          [class.review-flagged]="q.markedReviewState" (click)="jumpToQuestion(idx)">
           {{ idx + 1 }}
         </button>
       </div>
@@ -75,10 +70,12 @@
     <button type="button" class="nav-btn" [disabled]="currentIndex === 0" (click)="goToPrev()">
       <i class="fas fa-chevron-left"></i> Previous
     </button>
-    <button type="button" class="submit-action-btn" *ngIf="currentIndex === activeQuestions.length - 1" [disabled]="isSubmittingTest" (click)="submitExam()">
+    <button type="button" class="submit-action-btn" *ngIf="currentIndex === activeQuestions.length - 1"
+      [disabled]="isSubmittingTest" (click)="submitExam()">
       {{ isSubmittingTest ? 'Processing Responses...' : 'Final Submission' }}
     </button>
-    <button type="button" class="nav-btn next-accent" *ngIf="currentIndex < activeQuestions.length - 1" (click)="goToNext()">
+    <button type="button" class="nav-btn next-accent" *ngIf="currentIndex < activeQuestions.length - 1"
+      (click)="goToNext()">
       Next <i class="fas fa-chevron-right"></i>
     </button>
   </div>
@@ -120,7 +117,9 @@
             <span>Generating Report</span>
           </div>
         </div>
-        <div class="progress-track"><div class="progress-fill" [style.width.%]="analyzeProgress"></div></div>
+        <div class="progress-track">
+          <div class="progress-fill" [style.width.%]="analyzeProgress"></div>
+        </div>
       </div>
     </div>
 
@@ -138,7 +137,8 @@
       <div class="score-card" [ngClass]="scoreClass(examReport.percentage || 0)">
         <div class="score-big">{{ examReport.percentage || 0 }}%</div>
         <div class="score-grade">Grade: {{ examReport.grade || '—' }}</div>
-        <div class="score-raw">{{ examReport.netScore || 0 }} marks · {{ examReport.correct || 0 }}/{{ examReport.totalQuestions || 0 }} correct</div>
+        <div class="score-raw">{{ examReport.netScore || 0 }} marks · {{ examReport.correct || 0 }}/{{
+          examReport.totalQuestions || 0 }} correct</div>
       </div>
 
       <!-- Stats Grid -->
@@ -167,10 +167,14 @@
 
       <!-- Marks Breakdown -->
       <div class="marks-row">
-        <div class="mark-item"><span class="mark-label">Positive</span><span class="mark-val positive">+{{ examReport.positiveMarks || 0 }}</span></div>
-        <div class="mark-item"><span class="mark-label">Negative</span><span class="mark-val negative">{{ examReport.negativeMarks || 0 }}</span></div>
-        <div class="mark-item"><span class="mark-label">Net Score</span><span class="mark-val net">{{ examReport.netScore || 0 }}</span></div>
-        <div class="mark-item"><span class="mark-label">Rank</span><span class="mark-val">#{{ examReport.rank || '—' }}</span></div>
+        <div class="mark-item"><span class="mark-label">Positive</span><span class="mark-val positive">+{{
+            examReport.positiveMarks || 0 }}</span></div>
+        <div class="mark-item"><span class="mark-label">Negative</span><span class="mark-val negative">{{
+            examReport.negativeMarks || 0 }}</span></div>
+        <div class="mark-item"><span class="mark-label">Net Score</span><span class="mark-val net">{{
+            examReport.netScore || 0 }}</span></div>
+        <div class="mark-item"><span class="mark-label">Rank</span><span class="mark-val">#{{ examReport.rank || '—'
+            }}</span></div>
       </div>
 
       <!-- AI Summary -->
@@ -211,8 +215,7 @@
         </div>
         <p class="rq-text">{{ q.questionText }}</p>
         <div class="rq-options">
-          <div class="rq-opt" *ngFor="let opt of q.options"
-            [class.correct-opt]="opt.id === q.correctAnswerId"
+          <div class="rq-opt" *ngFor="let opt of q.options" [class.correct-opt]="opt.id === q.correctAnswerId"
             [class.wrong-opt]="opt.id === q.studentAnswerId && !q.isCorrect"
             [class.neutral]="opt.id !== q.correctAnswerId && opt.id !== q.studentAnswerId">
             <span class="opt-label">{{ opt.label }}</span>
@@ -247,7 +250,8 @@
   <div class="lockout-warning-box">
     <div class="warn-icon"><i class="fas fa-exclamation-triangle"></i></div>
     <h2>Exit Active Assessment Session?</h2>
-    <p>Your inputs selected up to this action step are stored. You can return later to resume parameters if remaining timeline allocations permit.</p>
+    <p>Your inputs selected up to this action step are stored. You can return later to resume parameters if remaining
+      timeline allocations permit.</p>
     <div class="modal-actions">
       <button type="button" class="btn-resume" (click)="dismissExitVerification()">Resume Session</button>
       <button type="button" class="btn-abort" (click)="confirmExitAndDestroy()">Exit Test</button>

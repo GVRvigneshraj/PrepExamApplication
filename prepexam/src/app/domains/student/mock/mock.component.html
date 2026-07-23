@@ -9,13 +9,22 @@
         <p>{{ seriesMeta()?.examName || 'Exam' }} · {{ headerStats().total }} Series</p>
       </div>
     </div>
-    <div class="topbar-stats">
-      <div class="ts-item"><span class="ts-val">{{ headerStats().total }}</span><span class="ts-lbl">Total</span></div>
+    <!-- <div class="topbar-stats">
+      <div class="ts-item">
+        <span class="ts-val">{{ headerStats().total }}</span>
+        <span class="ts-lbl">Total</span>
+      </div>
       <div class="ts-div"></div>
-      <div class="ts-item"><span class="ts-val">{{ headerStats().unlocked }}</span><span class="ts-lbl">Unlocked</span></div>
+      <div class="ts-item">
+        <span class="ts-val ts-unlocked">{{ headerStats().unlocked }}</span>
+        <span class="ts-lbl">Unlocked</span>
+      </div>
       <div class="ts-div"></div>
-      <div class="ts-item"><span class="ts-val">{{ headerStats().completed }}</span><span class="ts-lbl">Done</span></div>
-    </div>
+      <div class="ts-item">
+        <span class="ts-val ts-done">{{ headerStats().completed }}</span>
+        <span class="ts-lbl">Done</span>
+      </div>
+    </div> -->
   </header>
 
   <!-- ═══ TAB BAR ═══ -->
@@ -40,8 +49,15 @@
       <span>Loading series...</span>
     </div>
 
+    <!-- Empty -->
+    <div class="empty-state" *ngIf="!isLoading() && seriesList().length === 0">
+      <i class="fas fa-flask"></i>
+      <p>No series available yet</p>
+      <span>Check back once your faculty publishes a mock series</span>
+    </div>
+
     <!-- Series List -->
-    <div class="series-list" *ngIf="!isLoading()">
+    <div class="series-list" *ngIf="!isLoading() && seriesList().length > 0">
       <div class="series-card" *ngFor="let series of seriesList()"
         [class.locked]="!series.unlocked"
         [class.expanded]="isExpanded(series.seriesId)">
@@ -66,12 +82,12 @@
             </div>
           </div>
           <div class="sc-right">
-            <div class="sc-grade" *ngIf="series.attemptCount > 0"
-              [style.background]="getGradeColor(series.averageAccuracy) + '15'"
-              [style.color]="getGradeColor(series.averageAccuracy)">
+            <div class="sc-grade-seal" *ngIf="series.attemptCount > 0"
+              [style.color]="getGradeColor(series.averageAccuracy)"
+              [style.border-color]="getGradeColor(series.averageAccuracy)">
               {{ getGrade(series.averageAccuracy) }}
             </div>
-            <i class="fas" [ngClass]="isExpanded(series.seriesId) ? 'fa-chevron-up' : 'fa-chevron-down'" class="sc-arrow"></i>
+            <i class="fas fa-chevron-down sc-arrow" [ngClass]="isExpanded(series.seriesId) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
           </div>
         </div>
 
@@ -164,12 +180,12 @@
     </div>
   </div>
 
-  <!-- ═══ Full MOCK ═══ -->
+  <!-- ═══ QUICK MOCK ═══ -->
   <div class="view" *ngIf="activeTab() === 'mock'">
     <div class="quick-mock-card">
       <div class="qm-icon"><i class="fas fa-bolt"></i></div>
       <h3>Full Mock Test</h3>
-      <p>Generate a random 30-question mock test from any subject. Practice anytime, anywhere.</p>
+      <p>Generate a full-length mock test covering every subject. Practice anytime, anywhere.</p>
       <div class="qm-features">
         <div class="qm-feat"><i class="fas fa-list"></i> 180 Questions</div>
         <div class="qm-feat"><i class="fas fa-clock"></i> 180 Minutes</div>
@@ -198,14 +214,32 @@
         </div>
         <div class="pyq-actions">
           <button class="btn-history small" (click)="openMockHistory('NEET ' + year, $event); $event.stopPropagation()">
-            <i class="fas fa-history"></i>
+            <i class="fas fa-history"></i> History
           </button>
-          <div class="pyq-play"><i class="fas fa-play-circle"></i></div>
+          <button class="btn-start small" (click)="startPyq(year); $event.stopPropagation()">
+            <i class="fas fa-play"></i> Start Test
+          </button>
         </div>
       </div>
     </div>
   </div>
 
+</div>
+
+<!-- ═══ START CONFIRMATION MODAL ═══ -->
+<div class="start-confirm-overlay" *ngIf="showStartConfirm()" [class.is-closing]="closingStartConfirm()">
+  <div class="start-confirm-card" role="dialog" aria-modal="true" aria-labelledby="mock-start-title" #modalCard>
+    <button type="button" class="start-confirm-close" aria-label="Close confirmation dialog" (click)="closeStartConfirmation()">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="start-confirm-icon"><i class="fas fa-rocket"></i></div>
+    <h3 id="mock-start-title">Start Test</h3>
+    <p>{{ pendingStartRequest()?.testName || 'Are you ready to begin the mock assessment?' }}</p>
+    <div class="start-confirm-actions">
+      <button type="button" class="btn-cancel" #cancelButton (click)="closeStartConfirmation()">Cancel</button>
+      <button type="button" class="btn-start" (click)="confirmStartTest()">Confirm & Start</button>
+    </div>
+  </div>
 </div>
 
 <!-- ═══ ACTIVE TEST ═══ -->
@@ -257,9 +291,9 @@
 
         <!-- Stats Row -->
         <div class="ac-stats">
-          <div class="ac-stat"><span class="ac-stat-val" style="color:#22c55e">{{ a.correct }}</span><span class="ac-stat-lbl">Correct</span></div>
-          <div class="ac-stat"><span class="ac-stat-val" style="color:#ef4444">{{ a.wrong }}</span><span class="ac-stat-lbl">Wrong</span></div>
-          <div class="ac-stat"><span class="ac-stat-val" style="color:#94a3b8">{{ a.skipped }}</span><span class="ac-stat-lbl">Skipped</span></div>
+          <div class="ac-stat"><span class="ac-stat-val ac-good">{{ a.correct }}</span><span class="ac-stat-lbl">Correct</span></div>
+          <div class="ac-stat"><span class="ac-stat-val ac-bad">{{ a.wrong }}</span><span class="ac-stat-lbl">Wrong</span></div>
+          <div class="ac-stat"><span class="ac-stat-val ac-neutral">{{ a.skipped }}</span><span class="ac-stat-lbl">Skipped</span></div>
           <div class="ac-stat"><span class="ac-stat-val">{{ a.netScore }}</span><span class="ac-stat-lbl">Score</span></div>
         </div>
 
@@ -304,12 +338,4 @@
   <div class="l-ring"></div>
   <div class="l-txt">{{ loadingTitle() }}</div>
   <div class="l-sub">{{ loadingSub() }}</div>
-</div>
-
-<!-- Toasts -->
-<div class="toast-wrap">
-  <div class="toast" [class.ok]="t.type === 'ok'" *ngFor="let t of toasts()">
-    <i class="fas" [ngClass]="t.type === 'ok' ? 'fa-check-circle' : 'fa-info-circle'"></i>
-    {{ t.msg }}
-  </div>
 </div>

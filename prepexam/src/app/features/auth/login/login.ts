@@ -5,6 +5,7 @@ import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { StorageService } from '../../../core/services/storage.service';
 import { TokenService } from '../../../core/auth/token.service';
+import { AppAlertService } from '../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,6 @@ import { TokenService } from '../../../core/auth/token.service';
 export class Login implements OnInit {
   loginForm!: FormGroup;
   isSubmitting = false;
-  showToast = false;
   loginErrorMessage = '';
   hidePassword = true;
 
@@ -26,7 +26,8 @@ export class Login implements OnInit {
     private authService: AuthService,
     private storage: StorageService,
     private jwt: TokenService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private alertService: AppAlertService
   ) {}
 
   ngOnInit(): void {
@@ -76,12 +77,11 @@ export class Login implements OnInit {
       this.authService.login(payload).subscribe({
         next: (res) => {
           if (res && res.success) {
-            this.showToast = true;
             this.isSubmitting = false;
+            this.alertService.success('Login successful! Redirecting shortly...', 'Success');
             this.cdr.detectChanges();
 
             setTimeout(() => {
-              this.showToast = false;
               this.cdr.detectChanges();
               this.authService.navigateAfterLogin();
             }, 2000);
@@ -90,6 +90,7 @@ export class Login implements OnInit {
             this.loginErrorMessage = res.message || 'Invalid credentials.';
             this.emailOrMobileControl?.setErrors({ invalidCredentials: true });
             this.passwordControl?.setErrors({ invalidCredentials: true });
+            this.alertService.error(res.message || 'Invalid credentials.', 'Login Failed');
             this.cdr.detectChanges();
           }
         },
@@ -98,6 +99,7 @@ export class Login implements OnInit {
           this.loginErrorMessage = err?.error?.message || 'Invalid credentials. Please try again.';
           this.emailOrMobileControl?.setErrors({ invalidCredentials: true });
           this.passwordControl?.setErrors({ invalidCredentials: true });
+          this.alertService.error(err?.error?.message || 'Invalid credentials. Please try again.', 'Login Failed');
           this.cdr.detectChanges();
         }
       });
